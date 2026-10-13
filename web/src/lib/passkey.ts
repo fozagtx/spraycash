@@ -20,8 +20,8 @@ import { sha256 } from "@noble/hashes/sha2.js";
 import { utf8ToBytes } from "@noble/hashes/utils.js";
 import { getAddress, type Address, type LocalAccount } from "viem";
 
-const CREDENTIAL_KEY = "payday.credential";
-const HKDF_SALT = utf8ToBytes("payday.accounts.v1");
+const CREDENTIAL_KEY = "spraycash.credential";
+const HKDF_SALT = utf8ToBytes("spraycash.accounts.v1");
 
 let prfSecret: Uint8Array | null = null;
 const accounts = new Map<string, LocalAccount>();
@@ -32,7 +32,7 @@ const scopeInfo = (scope: AccountScope) =>
   scope.kind === "employer" ? "employer" : `client:${scope.employer.toLowerCase()}`;
 
 function rpInfo() {
-  return { id: window.location.hostname, name: "Payday" };
+  return { id: window.location.hostname, name: "Spraycash" };
 }
 
 function storedCredential(): PasskeyCredentialMetadata | undefined {
@@ -56,7 +56,7 @@ export function isUnlocked() {
 export async function createPasskey(displayName: string) {
   const result = await createPasskeyWithPrfOutput({
     rp: rpInfo(),
-    user: { name: displayName || "Payday account", displayName: displayName || "Payday account" },
+    user: { name: displayName || "Spraycash account", displayName: displayName || "Spraycash account" },
   });
   const { credentialId, transports } = result;
   try {
@@ -67,7 +67,7 @@ export async function createPasskey(displayName: string) {
   setSecret(result.prfOutput);
 }
 
-/** Uses an existing passkey. With no stored hint the browser offers every Payday passkey on the device. */
+/** Uses an existing passkey. With no stored hint the browser offers every Spraycash passkey on the device. */
 export async function unlockPasskey() {
   const credential = storedCredential();
   const result = await getPasskeyPrfOutput({ rpId: rpInfo().id, ...(credential ? { credential } : {}) });
@@ -115,7 +115,7 @@ export function getAccount(scope: AccountScope): LocalAccount {
 
 // ------------------------------------------------------------ public address cache
 
-const ADDRESSES_KEY = "payday.addresses";
+const ADDRESSES_KEY = "spraycash.addresses";
 
 function readAddresses(): Record<string, Address> {
   try {
@@ -148,7 +148,7 @@ export function knownClientAccounts(): { employer: Address; account: Address }[]
 export function passkeyErrorMessage(error: unknown): string {
   if (isMeraError(error)) {
     if (error.code === "PRF_UNAVAILABLE") {
-      return "This browser or device can't create a Payday passkey yet. Try Chrome or Safari on a recent phone or laptop.";
+      return "This browser or device can't create a Spraycash passkey yet. Try Chrome or Safari on a recent phone or laptop.";
     }
     if (error.code === "PASSKEY_OPERATION_FAILED") return "Passkey request was cancelled or timed out. Try again.";
   }

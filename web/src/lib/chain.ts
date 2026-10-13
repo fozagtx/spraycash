@@ -1,5 +1,5 @@
 import { createPublicClient, http, type Address, type Hex } from "viem";
-import { fxRateReceiverAbi, paydayPayrollAbi, paydayUSDAbi } from "./abi";
+import { fxRateReceiverAbi, spraycashPayrollAbi, spraycashUSDAbi } from "./abi";
 import { addresses, chain } from "./config";
 import { currencyKey, type CurrencyCode } from "./currencies";
 
@@ -25,7 +25,7 @@ export async function readQuote(currency: CurrencyCode): Promise<Quote> {
 
 export async function readMaxRateAge(): Promise<number> {
   return Number(
-    await publicClient.readContract({ address: addresses.payroll, abi: paydayPayrollAbi, functionName: "maxRateAge" }),
+    await publicClient.readContract({ address: addresses.payroll, abi: spraycashPayrollAbi, functionName: "maxRateAge" }),
   );
 }
 
@@ -51,7 +51,7 @@ export type Payslip = {
 export async function readPayslip(id: bigint): Promise<Payslip> {
   const p = await publicClient.readContract({
     address: addresses.payroll,
-    abi: paydayPayrollAbi,
+    abi: spraycashPayrollAbi,
     functionName: "getPayslip",
     args: [id],
   });
@@ -65,7 +65,7 @@ export async function readPayslips(ids: readonly bigint[]): Promise<Payslip[]> {
 export async function readEmployerPayslipIds(employer: Address) {
   return publicClient.readContract({
     address: addresses.payroll,
-    abi: paydayPayrollAbi,
+    abi: spraycashPayrollAbi,
     functionName: "payslipsOfEmployer",
     args: [employer],
   });
@@ -74,26 +74,26 @@ export async function readEmployerPayslipIds(employer: Address) {
 export async function readFreelancerPayslipIds(freelancer: Address) {
   return publicClient.readContract({
     address: addresses.payroll,
-    abi: paydayPayrollAbi,
+    abi: spraycashPayrollAbi,
     functionName: "payslipsOfFreelancer",
     args: [freelancer],
   });
 }
 
 export async function readUsdBalance(owner: Address) {
-  return publicClient.readContract({ address: addresses.usd, abi: paydayUSDAbi, functionName: "balanceOf", args: [owner] });
+  return publicClient.readContract({ address: addresses.usd, abi: spraycashUSDAbi, functionName: "balanceOf", args: [owner] });
 }
 
 export async function readAllowance(owner: Address) {
   return publicClient.readContract({
     address: addresses.usd,
-    abi: paydayUSDAbi,
+    abi: spraycashUSDAbi,
     functionName: "allowance",
     args: [owner, addresses.payroll],
   });
 }
 
-/** Earned so far at `nowSeconds` (fractional), mirroring PaydayPayroll._earned so the UI can tick smoothly. */
+/** Earned so far at `nowSeconds` (fractional), mirroring SpraycashPayroll._earned so the UI can tick smoothly. */
 export function earnedAt(p: Payslip, nowSeconds: number): number {
   const start = Number(p.start);
   const end = Number(p.end);
@@ -137,7 +137,7 @@ export async function findRateTx(currency: CurrencyCode, block: bigint): Promise
 export async function findFundingTx(id: bigint, block: bigint): Promise<Hex | undefined> {
   const logs = await publicClient.getContractEvents({
     address: addresses.payroll,
-    abi: paydayPayrollAbi,
+    abi: spraycashPayrollAbi,
     eventName: "PayslipCreated",
     args: { id },
     fromBlock: block,

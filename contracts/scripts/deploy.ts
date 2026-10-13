@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { getAddress } from "viem";
 
-// Deploys the full Payday stack and writes addresses to deployments/<network>.json.
+// Deploys the full Spraycash stack and writes addresses to deployments/<network>.json.
 //
 // CRE_FORWARDER_ADDRESS: the Chainlink CRE forwarder allowed to write FX reports.
 //   For `cre workflow simulate --broadcast` use the MockKeystoneForwarder for Monad testnet
@@ -16,14 +16,14 @@ async function main() {
   console.log(`Deployer:       ${deployer.account.address}`);
   console.log(`CRE forwarder:  ${creForwarder}`);
 
-  const forwarder = await hre.viem.deployContract("PaydayForwarder");
-  console.log(`PaydayForwarder ${forwarder.address}`);
-  const usd = await hre.viem.deployContract("PaydayUSD", [forwarder.address]);
-  console.log(`PaydayUSD       ${usd.address}`);
+  const forwarder = await hre.viem.deployContract("SpraycashForwarder");
+  console.log(`SpraycashForwarder ${forwarder.address}`);
+  const usd = await hre.viem.deployContract("SpraycashUSD", [forwarder.address]);
+  console.log(`SpraycashUSD       ${usd.address}`);
   const fx = await hre.viem.deployContract("FxRateReceiver", [creForwarder]);
   console.log(`FxRateReceiver  ${fx.address}`);
-  const payroll = await hre.viem.deployContract("PaydayPayroll", [usd.address, fx.address, forwarder.address]);
-  console.log(`PaydayPayroll   ${payroll.address}`);
+  const payroll = await hre.viem.deployContract("SpraycashPayroll", [usd.address, fx.address, forwarder.address]);
+  console.log(`SpraycashPayroll   ${payroll.address}`);
 
   const out = {
     chainId: await publicClient.getChainId(),

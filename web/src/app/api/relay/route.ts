@@ -17,7 +17,7 @@ import {
   type Hex,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { paydayForwarderAbi, paydayPayrollAbi, paydayUSDAbi } from "@/lib/abi";
+import { spraycashForwarderAbi, spraycashPayrollAbi, spraycashUSDAbi } from "@/lib/abi";
 import { addresses, chain } from "@/lib/config";
 
 export const runtime = "nodejs";
@@ -26,10 +26,10 @@ export const runtime = "nodejs";
 // can't be used as a general-purpose fee sponsor.
 const ALLOWED: Record<string, { abi: Abi; functions: string[] }> = {
   payroll: {
-    abi: paydayPayrollAbi as Abi,
+    abi: spraycashPayrollAbi as Abi,
     functions: ["createPayslip", "claim", "withdraw", "stop", "refundUnclaimed"],
   },
-  usd: { abi: paydayUSDAbi as Abi, functions: ["faucet", "approve"] },
+  usd: { abi: spraycashUSDAbi as Abi, functions: ["faucet", "approve"] },
 };
 
 const MAX_GAS = 1_000_000n;
@@ -92,7 +92,7 @@ function fail(error: string, status = 400, code?: string) {
 }
 
 function decodeRevert(err: unknown): { code?: string; message: string } {
-  const abis = [paydayPayrollAbi, paydayUSDAbi, paydayForwarderAbi] as Abi[];
+  const abis = [spraycashPayrollAbi, spraycashUSDAbi, spraycashForwarderAbi] as Abi[];
   if (err instanceof BaseError) {
     const reverted = err.walk((e) => e instanceof ContractFunctionRevertedError) as ContractFunctionRevertedError | null;
     const raw = (reverted?.raw ?? (err.walk((e) => isHex((e as { data?: unknown }).data)) as { data?: Hex } | null)?.data) as
@@ -112,7 +112,7 @@ function decodeRevert(err: unknown): { code?: string; message: string } {
 
 export async function POST(req: Request) {
   const r = relayer();
-  if (!r) return fail("Payday isn't set up to send payments right now.", 503, "RelayerNotConfigured");
+  if (!r) return fail("Spraycash isn't set up to send payments right now.", 503, "RelayerNotConfigured");
 
   const body = (await req.json().catch(() => ({}))) as RequestBody;
   const q = body.request;
@@ -149,7 +149,7 @@ export async function POST(req: Request) {
   // 1. The signature must be valid and unexpired.
   const valid = await r.publicClient.readContract({
     address: addresses.forwarder,
-    abi: paydayForwarderAbi,
+    abi: spraycashForwarderAbi,
     functionName: "verify",
     args: [request],
   });
@@ -174,7 +174,7 @@ export async function POST(req: Request) {
     const { request: tx } = await r.publicClient.simulateContract({
       account: r.account,
       address: addresses.forwarder,
-      abi: paydayForwarderAbi,
+      abi: spraycashForwarderAbi,
       functionName: "execute",
       args: [request],
     });

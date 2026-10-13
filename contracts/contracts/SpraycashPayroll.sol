@@ -11,14 +11,14 @@ import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import {FxRateReceiver} from "./FxRateReceiver.sol";
 
-/// @title PaydayPayroll
+/// @title SpraycashPayroll
 /// @notice Escrowed payslips that stream USD to a freelancer every second, at an FX rate
 /// locked from a fresh Chainlink CRE report at the moment the employer hits pay.
 ///
 /// Lifecycle: create (employer funds) -> claim (freelancer binds their account via the claim link)
 /// -> withdraw (any time, earned so far) -> stop (employer; earned stays, unearned refunds)
 /// or refundUnclaimed (link expired unclaimed; everything refunds).
-contract PaydayPayroll is ERC2771Context, Ownable, ReentrancyGuard {
+contract SpraycashPayroll is ERC2771Context, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     struct Payslip {
@@ -219,7 +219,7 @@ contract PaydayPayroll is ERC2771Context, Ownable, ReentrancyGuard {
     // ------------------------------------------------------------------- views
 
     function claimDigest(uint256 id, address freelancer) public view returns (bytes32) {
-        return keccak256(abi.encode("Payday claim", block.chainid, address(this), id, freelancer));
+        return keccak256(abi.encode("Spraycash claim", block.chainid, address(this), id, freelancer));
     }
 
     function getPayslip(uint256 id) external view returns (Payslip memory) {

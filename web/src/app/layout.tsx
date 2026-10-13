@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Payday · Pay freelancers anywhere, every second",
+  title: "Spraycash · Pay your team anywhere, every second",
   description:
     "Fund payroll in dollars. Your team sees earnings tick up in their own currency, at a rate locked the moment you hit pay.",
 };
@@ -24,9 +25,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="header">
           <div className="container header-inner">
-            <Link href="/" className="brand" aria-label="Payday home">
-              <span className="brand-mark" aria-hidden />
-              Payday
+            <Link href="/" className="brand" aria-label="Spraycash home">
+              <Logo />
             </Link>
             <nav className="nav">
               <Link href="/employer">Run payroll</Link>
@@ -36,8 +36,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main>{children}</main>
         <footer className="footer">
-          <div className="container">
-            Payday runs on a test network with demo dollars. Exchange rates verified by Chainlink.
+          <div className="container footer-inner">
+            <Logo size={22} />
+            <span>Payroll that crosses borders as fast as the work does.</span>
+            <span>Test network · demo dollars · rates verified by Chainlink</span>
           </div>
         </footer>
       </body>

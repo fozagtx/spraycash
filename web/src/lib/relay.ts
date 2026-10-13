@@ -1,7 +1,7 @@
 "use client";
 
 import type { Address, Hex, LocalAccount } from "viem";
-import { paydayForwarderAbi } from "./abi";
+import { spraycashForwarderAbi } from "./abi";
 import { chainNow, publicClient } from "./chain";
 import { addresses, chain } from "./config";
 
@@ -27,20 +27,20 @@ export class RelayError extends Error {
 }
 
 /**
- * Signs `data` for `to` with the passkey account and asks the Payday relayer to submit it.
+ * Signs `data` for `to` with the passkey account and asks the Spraycash relayer to submit it.
  * The person never needs a balance for fees; the relayer pays, but can't change what was signed.
  */
 export async function sendGasless(account: LocalAccount, to: Address, data: Hex, gas = 600_000n): Promise<Hex> {
   const nonce = await publicClient.readContract({
     address: addresses.forwarder,
-    abi: paydayForwarderAbi,
+    abi: spraycashForwarderAbi,
     functionName: "nonces",
     args: [account.address],
   });
   const deadline = Math.floor(chainNow()) + 10 * 60;
   const message = { from: account.address, to, value: 0n, gas, nonce, deadline, data };
   const signature = await account.signTypedData!({
-    domain: { name: "PaydayForwarder", version: "1", chainId: chain.id, verifyingContract: addresses.forwarder },
+    domain: { name: "SpraycashForwarder", version: "1", chainId: chain.id, verifyingContract: addresses.forwarder },
     types: FORWARD_REQUEST_TYPES,
     primaryType: "ForwardRequest",
     message,

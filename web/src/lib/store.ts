@@ -11,8 +11,8 @@ export type PayslipMeta = {
   link: string;
 };
 
-const META_KEY = "payday.payslipMeta";
-const BUSINESS_KEY = "payday.businessName";
+const META_KEY = "spraycash.payslipMeta";
+const BUSINESS_KEY = "spraycash.businessName";
 
 function read<T>(key: string, fallback: T): T {
   try {
@@ -48,7 +48,7 @@ export function setBusinessName(name: string) {
 }
 
 /** Who a freelancer's client accounts belong to, for the "My pay" page. */
-const CLIENT_NAMES_KEY = "payday.clientNames";
+const CLIENT_NAMES_KEY = "spraycash.clientNames";
 export function rememberClientName(employer: Address, name: string) {
   const all = read<Record<string, string>>(CLIENT_NAMES_KEY, {});
   all[employer.toLowerCase()] = name;
@@ -59,7 +59,7 @@ export function clientName(employer: Address) {
 }
 
 /** Withdrawal receipts this device made, newest first. */
-const RECEIPTS_KEY = "payday.receipts";
+const RECEIPTS_KEY = "spraycash.receipts";
 export function rememberReceipt(id: bigint, hash: string) {
   const all = read<Record<string, string[]>>(RECEIPTS_KEY, {});
   const key = id.toString();

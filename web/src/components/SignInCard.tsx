@@ -63,7 +63,7 @@ export function SignInCard({
             {busy ? <Spinner /> : null} Create passkey
           </button>
           <button type="button" className="btn btn-ghost btn-block" onClick={onUnlock} disabled={busy}>
-            I already have a Payday passkey
+            I already have a Spraycash passkey
           </button>
         </form>
       )}

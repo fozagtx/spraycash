@@ -81,7 +81,7 @@ export function Avatar({ name }: { name: string }) {
 export function NotConfigured() {
   return (
     <div className="notice notice-warning">
-      Payday isn&apos;t connected yet. Set the contract addresses in <span className="mono">web/.env.local</span>{" "}
+      Spraycash isn&apos;t connected yet. Set the contract addresses in <span className="mono">web/.env.local</span>{" "}
       (see the README).
     </div>
   );

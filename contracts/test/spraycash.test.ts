@@ -36,10 +36,10 @@ function metadata(owner: Address): Hex {
 async function deploy() {
   const [admin, creForwarder, employer, stranger] = await hre.viem.getWalletClients();
   const publicClient = await hre.viem.getPublicClient();
-  const forwarder = await hre.viem.deployContract("PaydayForwarder");
-  const usd = await hre.viem.deployContract("PaydayUSD", [forwarder.address]);
+  const forwarder = await hre.viem.deployContract("SpraycashForwarder");
+  const usd = await hre.viem.deployContract("SpraycashUSD", [forwarder.address]);
   const fx = await hre.viem.deployContract("FxRateReceiver", [creForwarder.account.address]);
-  const payroll = await hre.viem.deployContract("PaydayPayroll", [usd.address, fx.address, forwarder.address]);
+  const payroll = await hre.viem.deployContract("SpraycashPayroll", [usd.address, fx.address, forwarder.address]);
 
   const asCre = await hre.viem.getContractAt("FxRateReceiver", fx.address, { client: { wallet: creForwarder } });
   const pushRate = async (currencies = [INR], values = [RATE_INR], sources = [2]) => {
@@ -47,8 +47,8 @@ async function deploy() {
     await asCre.write.onReport([metadata(admin.account.address), report(currencies, values, sources, now)]);
   };
 
-  const usdAsEmployer = await hre.viem.getContractAt("PaydayUSD", usd.address, { client: { wallet: employer } });
-  const payrollAsEmployer = await hre.viem.getContractAt("PaydayPayroll", payroll.address, {
+  const usdAsEmployer = await hre.viem.getContractAt("SpraycashUSD", usd.address, { client: { wallet: employer } });
+  const payrollAsEmployer = await hre.viem.getContractAt("SpraycashPayroll", payroll.address, {
     client: { wallet: employer },
   });
   await usdAsEmployer.write.faucet();
@@ -79,7 +79,7 @@ async function forwardCall(ctx: Ctx, signer: ReturnType<typeof privateKeyToAccou
   const deadline = BigInt(await time.latest()) + 3600n;
   const gas = 500_000n;
   const signature = await signer.signTypedData({
-    domain: { name: "PaydayForwarder", version: "1", chainId, verifyingContract: ctx.forwarder.address },
+    domain: { name: "SpraycashForwarder", version: "1", chainId, verifyingContract: ctx.forwarder.address },
     types: {
       ForwardRequest: [
         { name: "from", type: "address" },
@@ -142,7 +142,7 @@ describe("FxRateReceiver", () => {
   });
 });
 
-describe("PaydayPayroll", () => {
+describe("SpraycashPayroll", () => {
   it("locks the quoted rate and streams pay every second", async () => {
     const ctx = await deploy();
     await ctx.pushRate();
@@ -268,7 +268,7 @@ describe("PaydayPayroll", () => {
     const ctx = await deploy();
     await ctx.pushRate();
     const { id } = await createPayslip(ctx);
-    const asStranger = await hre.viem.getContractAt("PaydayPayroll", ctx.payroll.address, {
+    const asStranger = await hre.viem.getContractAt("SpraycashPayroll", ctx.payroll.address, {
       client: { wallet: ctx.stranger },
     });
     await expect(asStranger.write.stop([id])).to.be.rejectedWith("NotEmployer");
@@ -284,11 +284,11 @@ describe("PaydayPayroll", () => {
   });
 });
 
-describe("PaydayUSD", () => {
+describe("SpraycashUSD", () => {
   it("faucet tops up low balances only", async () => {
     const ctx = await deploy();
     expect(await ctx.usd.read.balanceOf([ctx.employer.account.address])).to.equal(USD("25000"));
-    const asEmployer = await hre.viem.getContractAt("PaydayUSD", ctx.usd.address, { client: { wallet: ctx.employer } });
+    const asEmployer = await hre.viem.getContractAt("SpraycashUSD", ctx.usd.address, { client: { wallet: ctx.employer } });
     await expect(asEmployer.write.faucet()).to.be.rejectedWith("FaucetNotNeeded");
   });
 });

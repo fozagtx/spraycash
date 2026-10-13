@@ -1,8 +1,8 @@
-// Payday FX workflow (Chainlink CRE).
+// Spraycash FX workflow (Chainlink CRE).
 //
 // Every minute: fetch USD->INR/MXN/PHP/NGN from two independent public sources, take the median,
 // reject any currency whose sources disagree by more than 1%, and write the surviving rates to the
-// FxRateReceiver on Monad testnet as a signed CRE report. PaydayPayroll refuses to lock a rate that
+// FxRateReceiver on Monad testnet as a signed CRE report. SpraycashPayroll refuses to lock a rate that
 // is older than 10 minutes, so if this loop stops, new payslips stop too.
 import {
   ConsensusAggregationByFields,

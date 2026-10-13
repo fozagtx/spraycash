@@ -1,4 +1,4 @@
-# Payday indexer (Envio HyperIndex)
+# Spraycash indexer (Envio HyperIndex)
 
 Indexes payslips, withdrawals, refunds and every Chainlink CRE rate update on Monad testnet,
 for payroll history and receipts.

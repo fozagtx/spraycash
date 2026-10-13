@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getAddress, isHash, parseEventLogs, type Hex } from "viem";
-import { paydayPayrollAbi } from "@/lib/abi";
+import { spraycashPayrollAbi } from "@/lib/abi";
 import { findFundingTx, findRateTx, publicClient, readPayslip, type Payslip } from "@/lib/chain";
 import { addresses, explorerAddress, explorerTx } from "@/lib/config";
 import { currencyFromKey, type Currency } from "@/lib/currencies";
@@ -33,7 +33,7 @@ export default function ReceiptPage() {
     (async () => {
       const tx = await publicClient.waitForTransactionReceipt({ hash, timeout: 20_000 });
       const [log] = parseEventLogs({
-        abi: paydayPayrollAbi,
+        abi: spraycashPayrollAbi,
         logs: tx.logs.filter((l) => getAddress(l.address) === getAddress(addresses.payroll)),
         eventName: "Withdrawn",
       });

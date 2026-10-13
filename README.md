@@ -1,4 +1,6 @@
-# Payday
+<img src="docs/logo.svg" width="48" alt="Spraycash logo" />
+
+# Spraycash
 
 **Cross-border payroll for freelancers, paid by the second at a locked FX rate.**
 Monad Metropolis · Track 2 (Consumer Products & Payments)
@@ -27,14 +29,14 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
  ┌─────────────── Next.js app + /api/relay (pays fees, can't change what was signed) ──────────────┐
  └───────────────────────────────┬─────────────────────────────────────────────────────────────────┘
                                  ▼  ERC-2771
-                         PaydayForwarder
+                         SpraycashForwarder
                     ┌────────────┴─────────────┐
                     ▼                          ▼
-              PaydayPayroll ◄── getRate ── FxRateReceiver ◄── signed report ── Chainlink CRE workflow
+              SpraycashPayroll ◄── getRate ── FxRateReceiver ◄── signed report ── Chainlink CRE workflow
         (escrow, per-second stream,                                         (cron 60s: frankfurter + er-api,
          locked rate, stop/refund)                                           median, reject >1% spread)
                     │
-                 PaydayUSD (demo dollars, 6 decimals)
+                 SpraycashUSD (demo dollars, 6 decimals)
                     │
               Envio indexer (history: payslips, withdrawals, rate updates)
 ```
@@ -77,8 +79,8 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
 
 | Sponsor | Where it carries weight | Code |
 |---|---|---|
-| **Agora**: cross-border payments | The product itself | `contracts/contracts/PaydayPayroll.sol`, `web/` |
-| **Chainlink CRE** | Cron workflow: 2 HTTP sources → median → reject >1% → DON consensus (median per field) → signed report → `FxRateReceiver.onReport` (forwarder-only, optional workflow-owner check, replay-safe) | `cre/payday-fx/` |
+| **Agora**: cross-border payments | The product itself | `contracts/contracts/SpraycashPayroll.sol`, `web/` |
+| **Chainlink CRE** | Cron workflow: 2 HTTP sources → median → reject >1% → DON consensus (median per field) → signed report → `FxRateReceiver.onReport` (forwarder-only, optional workflow-owner check, replay-safe) | `cre/spraycash-fx/` |
 | **Mera**: best UX | Passkey sign-in for both sides; no seed phrase, no extension | `web/src/lib/passkey.ts` |
 | **Mera**: one passkey, many keys | HKDF-derived account per client from one PRF secret; "My pay" shows each account | `web/src/lib/passkey.ts`, `web/src/app/me` |
 | **Envio** | HyperIndex indexer for payslips, withdrawals, refunds and rate updates | `indexer/` |
@@ -87,8 +89,8 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
 ## Repo layout
 
 ```
-contracts/   Hardhat + viem. PaydayPayroll, FxRateReceiver, PaydayUSD, PaydayForwarder + tests + deploy scripts
-cre/         Chainlink CRE project (project.yaml) and the payday-fx TypeScript workflow
+contracts/   Hardhat + viem. SpraycashPayroll, FxRateReceiver, SpraycashUSD, SpraycashForwarder + tests + deploy scripts
+cre/         Chainlink CRE project (project.yaml) and the spraycash-fx TypeScript workflow
 web/         Next.js 15 app: employer + freelancer flows, /api/relay, Playwright e2e (web/e2e/flow.cjs)
 indexer/     Envio HyperIndex config, schema and handlers
 ```
@@ -112,20 +114,20 @@ npm run export-abi               # regenerates web/src/lib/abi.ts
 ```
 
 Demo tip: the owner can shorten the stale window to show the stale-rate path live:
-`PaydayPayroll.setMaxRateAge(30)` (bounds: 30s–1 day).
+`SpraycashPayroll.setMaxRateAge(30)` (bounds: 30s–1 day).
 
 ### 2. CRE workflow
 
 ```bash
 cd cre
-node set-receiver.mjs            # copies FxRateReceiver address into payday-fx/config.staging.json
+node set-receiver.mjs            # copies FxRateReceiver address into spraycash-fx/config.staging.json
 cp .env.example .env             # CRE_ETH_PRIVATE_KEY = key that broadcasts the simulated write
-cd payday-fx && bun install && bun test && bunx tsc --noEmit && cd ..
-cre workflow simulate payday-fx --target staging-settings --broadcast
+cd spraycash-fx && bun install && bun test && bunx tsc --noEmit && cd ..
+cre workflow simulate spraycash-fx --target staging-settings --broadcast
 ./run-loop.sh                    # re-runs simulate --broadcast every 60s, logs to cre/logs/simulate.log
 ```
 
-The workflow compiles to WASM (`bun x cre-compile payday-fx/main.ts out.wasm`). The pure aggregation logic
+The workflow compiles to WASM (`bun x cre-compile spraycash-fx/main.ts out.wasm`). The pure aggregation logic
 (`fx.ts`) is unit-tested.
 
 ### 3. Web app + relayer
@@ -138,7 +140,7 @@ npm run dev                      # https required for passkeys anywhere except l
 ```
 
 The relayer (`/api/relay`) only forwards a fixed allowlist of calls (`createPayslip`, `claim`, `withdraw`,
-`stop`, `refundUnclaimed`, `faucet`, `approve`) to the Payday contracts. It verifies the signed ERC-2771 request,
+`stop`, `refundUnclaimed`, `faucet`, `approve`) to the Spraycash contracts. It verifies the signed ERC-2771 request,
 dry-runs the inner call to turn contract errors into plain-language messages, then submits.
 
 Deploy to Vercel with the same env vars. `RELAYER_PRIVATE_KEY` must be a server-only variable.
@@ -154,7 +156,7 @@ cd indexer && npm install && npx envio codegen && npx envio dev
 | Layer | Command | Status |
 |---|---|---|
 | Contracts | `cd contracts && npm test` | 11 passing |
-| CRE logic | `cd cre/payday-fx && bun test` | 5 passing; typechecks; compiles to WASM |
+| CRE logic | `cd cre/spraycash-fx && bun test` | 5 passing; typechecks; compiles to WASM |
 | Web | `cd web && npm run build` | builds and typechecks |
 | End to end | `web/e2e/flow.cjs` against a local Hardhat node (chain id via `NEXT_PUBLIC_CHAIN_ID=31337`) | passes |
 | Indexer | `cd indexer && npx envio codegen && npx tsc --noEmit` | passes |
@@ -180,20 +182,20 @@ _Fill in after `npm run deploy:monad` (from `contracts/deployments/monadTestnet.
 
 | Contract | Address |
 |---|---|
-| PaydayPayroll | |
+| SpraycashPayroll | |
 | FxRateReceiver | |
-| PaydayUSD | |
-| PaydayForwarder | |
+| SpraycashUSD | |
+| SpraycashForwarder | |
 
 CRE simulate logs with transaction hashes: `cre/logs/simulate.log`.
 
 ## Limitations
 
-- **Testnet and demo dollars** (`PaydayUSD`, 6 decimals, low-balance faucet). There's no real off-ramp to a bank or
+- **Testnet and demo dollars** (`SpraycashUSD`, 6 decimals, low-balance faucet). There's no real off-ramp to a bank or
   mobile money yet.
 - **NGN is single-source:** the ECB (frankfurter.app) doesn't publish NGN, so NGN comes from open.er-api.com only
   and is labelled "single source" in the UI. INR, MXN and PHP require both sources to agree within 1%.
-- **The relayer pays fees** from one funded key. It's allowlisted to Payday calls but not rate-limited.
+- **The relayer pays fees** from one funded key. It's allowlisted to Spraycash calls but not rate-limited.
 - **The FX loop** runs as `cre workflow simulate --broadcast` on a machine we control, not a deployed DON
   workflow. If it stops, the UI shows the rate age and Pay locks after 10 minutes, by design.
 - Names and claim links live in the employer's browser (localStorage). Money, rates and status are always

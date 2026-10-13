@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "payday-fx-workflow",
+      "name": "spraycash-fx-workflow",
       "dependencies": {
         "@chainlink/cre-sdk": "1.23.0",
         "viem": "^2.57.5",

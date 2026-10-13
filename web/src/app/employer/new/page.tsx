@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { encodeFunctionData, parseEventLogs, type Hex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { paydayPayrollAbi, paydayUSDAbi } from "@/lib/abi";
+import { spraycashPayrollAbi, spraycashUSDAbi } from "@/lib/abi";
 import { publicClient, readAllowance, readUsdBalance, type Quote } from "@/lib/chain";
 import { addresses, isConfigured } from "@/lib/config";
 import { CURRENCIES, CURRENCY_LIST, currencyKey, type CurrencyCode } from "@/lib/currencies";
@@ -88,7 +88,7 @@ export default function NewPayslipPage() {
             account,
             addresses.usd,
             encodeFunctionData({
-              abi: paydayUSDAbi,
+              abi: spraycashUSDAbi,
               functionName: "approve",
               args: [addresses.payroll, 2n ** 256n - 1n],
             }),
@@ -102,7 +102,7 @@ export default function NewPayslipPage() {
           account,
           addresses.payroll,
           encodeFunctionData({
-            abi: paydayPayrollAbi,
+            abi: spraycashPayrollAbi,
             functionName: "createPayslip",
             args: [
               currencyKey(currency),
@@ -118,7 +118,7 @@ export default function NewPayslipPage() {
           800_000n,
         );
         const receipt = await publicClient.waitForTransactionReceipt({ hash });
-        const [created] = parseEventLogs({ abi: paydayPayrollAbi, logs: receipt.logs, eventName: "PayslipCreated" });
+        const [created] = parseEventLogs({ abi: spraycashPayrollAbi, logs: receipt.logs, eventName: "PayslipCreated" });
         if (!created) throw new Error("Payslip created, but we couldn't read it back. Check your payroll.");
         const id = created.args.id;
         const localMonthly = Math.round(inUsd ? amount * rateToNumber(locked.rate) : amount);

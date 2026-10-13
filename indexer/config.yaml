@@ -1,6 +1,6 @@
-# Envio HyperIndex config for Payday on Monad testnet.
+# Envio HyperIndex config for Spraycash on Monad testnet.
 # Fill the addresses and start_block from contracts/deployments/monadTestnet.json.
-name: payday-indexer
+name: spraycash-indexer
 field_selection:
   transaction_fields:
     - hash
@@ -8,9 +8,9 @@ chains:
   - id: 10143
     start_block: 0
     contracts:
-      - name: PaydayPayroll
+      - name: SpraycashPayroll
         address: "0x0000000000000000000000000000000000000000"
-        abi_file_path: abis/PaydayPayroll.json
+        abi_file_path: abis/SpraycashPayroll.json
         events:
           - event: PayslipCreated(uint256 indexed id, address indexed employer, bytes32 indexed currency, uint256 lockedRate, uint128 deposit, uint64 start, uint64 end, uint64 claimDeadline, address claimSigner)
           - event: PayslipClaimed(uint256 indexed id, address indexed freelancer)

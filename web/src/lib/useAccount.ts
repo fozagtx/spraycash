@@ -60,7 +60,7 @@ export function usePasskeyAccount(scope: AccountScope | null) {
 
   /** Runs `fn` with the signing account, unlocking the passkey first if needed. */
   const withAccount = useCallback(
-    async <T,>(fn: (account: LocalAccount) => Promise<T>, displayName = "Payday account"): Promise<T> => {
+    async <T,>(fn: (account: LocalAccount) => Promise<T>, displayName = "Spraycash account"): Promise<T> => {
       if (!scope) throw new Error("No account");
       await ensureUnlocked(displayName);
       const account = getAccount(scope);

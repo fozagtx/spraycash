@@ -3,7 +3,7 @@ import { indexer } from "envio";
 const currencyCode = (key: string) =>
   Buffer.from(key.slice(2), "hex").toString("utf8").replace(/\0+$/, "");
 
-indexer.onEvent({ contract: "PaydayPayroll", event: "PayslipCreated" }, async ({ event, context }) => {
+indexer.onEvent({ contract: "SpraycashPayroll", event: "PayslipCreated" }, async ({ event, context }) => {
   context.Payslip.set({
     id: event.params.id.toString(),
     employer: event.params.employer,
@@ -29,12 +29,12 @@ indexer.onEvent({ contract: "PaydayPayroll", event: "PayslipCreated" }, async ({
   });
 });
 
-indexer.onEvent({ contract: "PaydayPayroll", event: "PayslipClaimed" }, async ({ event, context }) => {
+indexer.onEvent({ contract: "SpraycashPayroll", event: "PayslipClaimed" }, async ({ event, context }) => {
   const p = await context.Payslip.get(event.params.id.toString());
   if (p) context.Payslip.set({ ...p, freelancer: event.params.freelancer, status: "streaming" });
 });
 
-indexer.onEvent({ contract: "PaydayPayroll", event: "Withdrawn" }, async ({ event, context }) => {
+indexer.onEvent({ contract: "SpraycashPayroll", event: "Withdrawn" }, async ({ event, context }) => {
   const id = event.params.id.toString();
   const p = await context.Payslip.get(id);
   if (p) context.Payslip.set({ ...p, withdrawn: p.withdrawn + event.params.amount });
@@ -49,7 +49,7 @@ indexer.onEvent({ contract: "PaydayPayroll", event: "Withdrawn" }, async ({ even
   });
 });
 
-indexer.onEvent({ contract: "PaydayPayroll", event: "PayslipStopped" }, async ({ event, context }) => {
+indexer.onEvent({ contract: "SpraycashPayroll", event: "PayslipStopped" }, async ({ event, context }) => {
   const p = await context.Payslip.get(event.params.id.toString());
   if (!p) return;
   context.Payslip.set({ ...p, refunded: p.refunded + event.params.refunded, status: "stopped" });
@@ -57,7 +57,7 @@ indexer.onEvent({ contract: "PaydayPayroll", event: "PayslipStopped" }, async ({
   if (stats) context.EmployerStats.set({ ...stats, refunded: stats.refunded + event.params.refunded });
 });
 
-indexer.onEvent({ contract: "PaydayPayroll", event: "UnclaimedRefunded" }, async ({ event, context }) => {
+indexer.onEvent({ contract: "SpraycashPayroll", event: "UnclaimedRefunded" }, async ({ event, context }) => {
   const p = await context.Payslip.get(event.params.id.toString());
   if (!p) return;
   context.Payslip.set({ ...p, refunded: p.refunded + event.params.refunded, status: "refunded" });

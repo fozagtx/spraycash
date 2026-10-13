@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { encodeFunctionData, getAddress, isHex, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { paydayPayrollAbi } from "@/lib/abi";
+import { spraycashPayrollAbi } from "@/lib/abi";
 import { chainNow, publicClient, readPayslip, ZERO_ADDRESS, type Payslip } from "@/lib/chain";
 import { addresses, isConfigured } from "@/lib/config";
 import { currencyFromKey } from "@/lib/currencies";
@@ -123,7 +123,7 @@ export default function ClaimPage() {
         setStep("Connecting your account…");
         const digest = await publicClient.readContract({
           address: addresses.payroll,
-          abi: paydayPayrollAbi,
+          abi: spraycashPayrollAbi,
           functionName: "claimDigest",
           args: [p.id, account.address],
         });
@@ -131,11 +131,11 @@ export default function ClaimPage() {
         await sendGasless(
           account,
           addresses.payroll,
-          encodeFunctionData({ abi: paydayPayrollAbi, functionName: "claim", args: [p.id, signature] }),
+          encodeFunctionData({ abi: spraycashPayrollAbi, functionName: "claim", args: [p.id, signature] }),
         );
         rememberClientName(getAddress(p.employer), link!.from);
         router.push(`/payslip/${p.id}`);
-      }, link!.to || "Payday account");
+      }, link!.to || "Spraycash account");
     } catch (e) {
       setError(passkeyErrorMessage(e));
       setStep(undefined);

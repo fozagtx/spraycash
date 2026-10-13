@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { encodeFunctionData } from "viem";
-import { paydayPayrollAbi, paydayUSDAbi } from "@/lib/abi";
+import { spraycashPayrollAbi, spraycashUSDAbi } from "@/lib/abi";
 import {
   earnedAt,
   payslipStatus,
@@ -100,7 +100,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
   const addFunds = () =>
     act("funds", () =>
       acct.withAccount(async (a) => {
-        await sendGasless(a, addresses.usd, encodeFunctionData({ abi: paydayUSDAbi, functionName: "faucet" }));
+        await sendGasless(a, addresses.usd, encodeFunctionData({ abi: spraycashUSDAbi, functionName: "faucet" }));
         return "Added $25,000 in demo funds.";
       }, business),
     );
@@ -111,7 +111,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
         await sendGasless(
           a,
           addresses.payroll,
-          encodeFunctionData({ abi: paydayPayrollAbi, functionName: "stop", args: [p.id] }),
+          encodeFunctionData({ abi: spraycashPayrollAbi, functionName: "stop", args: [p.id] }),
         );
         return "Pay stopped. Earned pay stays with your freelancer; the rest is back in your balance.";
       }, business),
@@ -123,7 +123,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
         await sendGasless(
           a,
           addresses.payroll,
-          encodeFunctionData({ abi: paydayPayrollAbi, functionName: "refundUnclaimed", args: [p.id] }),
+          encodeFunctionData({ abi: spraycashPayrollAbi, functionName: "refundUnclaimed", args: [p.id] }),
         );
         return "The link expired unused, so the full amount is back in your balance.";
       }, business),

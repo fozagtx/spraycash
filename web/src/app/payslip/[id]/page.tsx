@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { encodeFunctionData, getAddress } from "viem";
-import { paydayPayrollAbi } from "@/lib/abi";
+import { spraycashPayrollAbi } from "@/lib/abi";
 import { chainNow, earnedAt, payslipStatus, readPayslip, ZERO_ADDRESS, type Payslip } from "@/lib/chain";
 import { addresses, isConfigured } from "@/lib/config";
 import { currencyFromKey } from "@/lib/currencies";
@@ -99,7 +99,7 @@ export default function PayslipPage() {
         return sendGasless(
           account,
           addresses.payroll,
-          encodeFunctionData({ abi: paydayPayrollAbi, functionName: "withdraw", args: [p.id] }),
+          encodeFunctionData({ abi: spraycashPayrollAbi, functionName: "withdraw", args: [p.id] }),
         );
       });
       rememberReceipt(p.id, hash);
