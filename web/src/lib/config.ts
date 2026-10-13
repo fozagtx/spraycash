@@ -13,6 +13,11 @@ export const chain = defineChain({
   testnet: true,
 });
 
+export const rateSources = {
+  frankfurter: "https://api.frankfurter.dev/v1/latest?from=USD&to=INR,MXN,PHP",
+  erApi: "https://open.er-api.com/v6/latest/USD",
+};
+
 const zero = "0x0000000000000000000000000000000000000000" as Address;
 
 /** Monad testnet deployment (contracts/deployments/monadTestnet.json). Env vars override it for local chains. */

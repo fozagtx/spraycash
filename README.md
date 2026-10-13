@@ -14,7 +14,7 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
 
 | | |
 |---|---|
-| Live URL | _TODO after Vercel deploy_ |
+| Live URL | _TODO after Render deploy_ |
 | Demo video | _TODO_ |
 | Handoff / status | [docs/HANDOFF.md](docs/HANDOFF.md) |
 | Contracts (Monad testnet) | see [Deployed addresses](#deployed-addresses) |
@@ -147,7 +147,7 @@ The relayer (`/api/relay`) only forwards a fixed allowlist of calls (`createPays
 `withdraw`, `stop`, `refundUnclaimed`, plus the local stand-in's `faucet`) to the Spraycash contracts. It verifies the signed ERC-2771 request,
 dry-runs the inner call to turn contract errors into plain-language messages, then submits.
 
-Deploy to Vercel with the same env vars. `RELAYER_PRIVATE_KEY` must be a server-only variable.
+Deploy on Render from the Blueprint in `render.yaml`. The only value to set is `RELAYER_PRIVATE_KEY`, the deployer key, which also refreshes FX rates every 4 minutes until CRE is wired.
 
 ### 4. Indexer (optional)
 
@@ -202,7 +202,7 @@ CRE simulate logs with transaction hashes: `cre/logs/simulate.log`.
   and is labelled "single source" in the UI. INR, MXN and PHP require both sources to agree within 1%.
 - **The relayer pays fees** from one funded key. It's allowlisted to Spraycash calls but not rate-limited.
 - **The FX loop** runs as `cre workflow simulate --broadcast` on a machine we control, not a deployed DON
-  workflow. If it stops, the UI shows the rate age and Pay locks after 10 minutes, by design.
+  workflow. The hosted app refreshes rates with the relayer key in the meantime. If it stops, the UI shows the rate age and Pay locks after 10 minutes, by design.
 - Names and claim links live in the employer's browser (localStorage). Money, rates and status are always
   read from the contracts.
 - Passkeys need WebAuthn PRF (recent Chrome, Safari 18+, iOS 18+, Android 9+). The fallback is a clear error
