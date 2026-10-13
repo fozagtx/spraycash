@@ -5,7 +5,7 @@
 **Cross-border payroll for freelancers, paid by the second at a locked FX rate.**
 Monad Metropolis · Track 2 (Consumer Products & Payments)
 
-A US client funds payroll in dollars. A freelancer in Bangalore, Mexico City, Manila or Lagos opens a link,
+A US client funds payroll in AUSD, the dollar by Agora. A freelancer in Bangalore, Mexico City, Manila or Lagos opens a link,
 signs in with Face ID, and watches their pay tick up **every second in their own currency**, at a rate that was
 locked from a **Chainlink-verified** report the moment the client hit pay. Withdrawing is free, with no fees
 or setup.
@@ -36,7 +36,7 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
         (escrow, per-second stream,                                         (cron 60s: frankfurter + er-api,
          locked rate, stop/refund)                                           median, reject >1% spread)
                     │
-                 SpraycashUSD (demo dollars, 6 decimals)
+                 AUSD by Agora (SpraycashUSD stand-in only for local dev)
                     │
               Envio indexer (history: payslips, withdrawals, rate updates)
 ```
@@ -79,7 +79,7 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
 
 | Sponsor | Where it carries weight | Code |
 |---|---|---|
-| **Agora**: cross-border payments | The product itself | `contracts/contracts/SpraycashPayroll.sol`, `web/` |
+| **Agora**: cross-border payments | Payroll is escrowed, streamed and withdrawn in **AUSD** on Monad testnet (`0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC`). Employers fund with one gasless request using an EIP-2612 **permit** (`createPayslipWithPermit`), and "Add funds" calls **Agora's AUSD faucet** (`requestFunds`). Receipts show "Paid in AUSD by Agora" with a Verify link | `contracts/contracts/SpraycashPayroll.sol`, `web/src/lib/permit.ts`, `web/src/app/api/faucet` |
 | **Chainlink CRE** | Cron workflow: 2 HTTP sources → median → reject >1% → DON consensus (median per field) → signed report → `FxRateReceiver.onReport` (forwarder-only, optional workflow-owner check, replay-safe) | `cre/spraycash-fx/` |
 | **Mera**: best UX | Passkey sign-in for both sides; no seed phrase, no extension | `web/src/lib/passkey.ts` |
 | **Mera**: one passkey, many keys | HKDF-derived account per client from one PRF secret; "My pay" shows each account | `web/src/lib/passkey.ts`, `web/src/app/me` |
@@ -109,7 +109,9 @@ npm test                         # 11 tests: streaming, quote lock, stale, stop/
 export DEPLOYER_PRIVATE_KEY=0x...
 export CRE_FORWARDER_ADDRESS=0x...   # CRE forwarder for monad-testnet (simulation uses the MockKeystoneForwarder;
                                      # see the CRE forwarder directory). Unset = deployer, for manual rate pushes.
-npm run deploy:monad             # writes deployments/monadTestnet.json
+npm run deploy:monad             # uses Agora AUSD on Monad testnet (checks it has 6 decimals);
+                                 # USD_TOKEN=demo deploys the SpraycashUSD stand-in instead
+                                 # writes deployments/monadTestnet.json
 npm run export-abi               # regenerates web/src/lib/abi.ts
 ```
 
@@ -134,13 +136,14 @@ The workflow compiles to WASM (`bun x cre-compile spraycash-fx/main.ts out.wasm`
 
 ```bash
 cd web
-cp .env.example .env.local       # fill addresses from contracts/deployments/monadTestnet.json + RELAYER_PRIVATE_KEY
+cp .env.example .env.local       # AUSD + Agora faucet addresses are prefilled; add the other addresses from
+                                 # contracts/deployments/monadTestnet.json + RELAYER_PRIVATE_KEY
 npm install
 npm run dev                      # https required for passkeys anywhere except localhost
 ```
 
-The relayer (`/api/relay`) only forwards a fixed allowlist of calls (`createPayslip`, `claim`, `withdraw`,
-`stop`, `refundUnclaimed`, `faucet`, `approve`) to the Spraycash contracts. It verifies the signed ERC-2771 request,
+The relayer (`/api/relay`) only forwards a fixed allowlist of calls (`createPayslip`, `createPayslipWithPermit`, `claim`,
+`withdraw`, `stop`, `refundUnclaimed`, plus the local stand-in's `faucet`) to the Spraycash contracts. It verifies the signed ERC-2771 request,
 dry-runs the inner call to turn contract errors into plain-language messages, then submits.
 
 Deploy to Vercel with the same env vars. `RELAYER_PRIVATE_KEY` must be a server-only variable.
@@ -155,7 +158,7 @@ cd indexer && npm install && npx envio codegen && npx envio dev
 
 | Layer | Command | Status |
 |---|---|---|
-| Contracts | `cd contracts && npm test` | 11 passing |
+| Contracts | `cd contracts && npm test` | 12 passing (incl. gasless permit funding) |
 | CRE logic | `cd cre/spraycash-fx && bun test` | 5 passing; typechecks; compiles to WASM |
 | Web | `cd web && npm run build` | builds and typechecks |
 | End to end | `web/e2e/flow.cjs` against a local Hardhat node (chain id via `NEXT_PUBLIC_CHAIN_ID=31337`) | passes |
@@ -191,8 +194,7 @@ CRE simulate logs with transaction hashes: `cre/logs/simulate.log`.
 
 ## Limitations
 
-- **Testnet and demo dollars** (`SpraycashUSD`, 6 decimals, low-balance faucet). There's no real off-ramp to a bank or
-  mobile money yet.
+- **Testnet AUSD:** payroll uses Agora's test AUSD on Monad testnet, funded from Agora's faucet (10,000 per request, about one a minute). `SpraycashUSD` exists only as a local stand-in. There's no off-ramp to a bank or mobile money yet.
 - **NGN is single-source:** the ECB (frankfurter.app) doesn't publish NGN, so NGN comes from open.er-api.com only
   and is labelled "single source" in the UI. INR, MXN and PHP require both sources to agree within 1%.
 - **The relayer pays fees** from one funded key. It's allowlisted to Spraycash calls but not rate-limited.
