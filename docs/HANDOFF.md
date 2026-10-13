@@ -40,7 +40,7 @@ Legend: ✅ done and tested · 🟡 done, not yet verified on live testnet · �
 
 | Requirement | Status | Where / notes |
 |---|---|---|
-| Envio indexer for dashboard and history | 🟡 | `indexer/`: codegen and typecheck pass; not run against testnet; the dashboard reads contracts directly and doesn't depend on it |
+| Envio indexer for dashboard and history | 🟡 | `indexer/`: runs against the local chain (`config.local.yaml`) and feeds payslip withdrawal history via `/api/history`; not run against testnet yet; the app falls back to contract reads |
 | Multiple clients per freelancer, separate accounts from one passkey | ✅ | HKDF `client:<employer>` derivation; "My pay" page (`web/src/app/me`) lists each account |
 | CSV export of payslips | ❌ | Not built |
 
@@ -75,7 +75,7 @@ audiences, receipt proof, FAQ, CTA).
 | **Chainlink CRE** ($3k) | 2 sources → median → reject >1% → DON median consensus → signed report → forwarder-only receiver with replay protection and optional workflow-owner check | Strong in code; needs simulate logs with tx hashes |
 | **Mera**, Best UX ($2.5k) | Face ID for both sides, no seed phrase, no crypto words, gasless | Strong |
 | **Mera**, One Passkey, Many Keys ($2.5k) | One PRF secret → HKDF → separate account per client; "My pay" shows them | Strong |
-| **Envio** ($1k) | HyperIndex for payslips, withdrawals, refunds, rate updates | Medium (not live) |
+| **Envio** ($1k) | HyperIndex for payslips, withdrawals, refunds, rate updates; powers payslip withdrawal history | Medium (live locally, not on testnet) |
 | Alchemy (credits) | RPC via env vars | Weak, don't lead with it |
 
 ---

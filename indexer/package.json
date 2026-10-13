@@ -1,6 +1,7 @@
 {
   "name": "spraycash-indexer",
   "private": true,
+  "type": "module",
   "scripts": {
     "codegen": "envio codegen",
     "dev": "envio dev",

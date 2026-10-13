@@ -16,4 +16,10 @@ Example query:
 { Payslip(order_by: { createdAt: desc }) { id currency deposit withdrawn status withdrawals { amount txHash } } }
 ```
 
-Codegen and typecheck pass (`npx envio codegen && npx tsc --noEmit`); it has not been run against live Monad testnet yet.
+Run it against the local Hardhat chain (addresses from `contracts/deployments/localhost.json`):
+
+```bash
+npx envio dev --config config.local.yaml
+```
+
+The web app reads withdrawal history from it through `/api/history` (endpoint set in `web/src/lib/config.ts`) and falls back to direct contract reads when the indexer is down. It has not been run against live Monad testnet yet.

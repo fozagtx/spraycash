@@ -12,6 +12,7 @@ import { formatDate, formatLocal, formatUsd, rateToNumber, shortHash, usdToNumbe
 import { passkeyErrorMessage } from "@/lib/passkey";
 import { sendGasless } from "@/lib/relay";
 import { clientName, receiptsFor, rememberReceipt } from "@/lib/store";
+import { fetchWithdrawals, type IndexedWithdrawal } from "@/lib/history";
 import { usePasskeyAccount } from "@/lib/useAccount";
 import { HeroAmount } from "@/components/HeroAmount";
 import { Flag, LiveDot, NotConfigured, Spinner, useFrameNow } from "@/components/ui";
@@ -33,6 +34,7 @@ export default function PayslipPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [receipts, setReceipts] = useState<string[]>([]);
+  const [history, setHistory] = useState<IndexedWithdrawal[] | null>(null);
   const scope = payslip ? ({ kind: "client", employer: getAddress(payslip.employer) } as const) : null;
   const acct = usePasskeyAccount(scope);
 
@@ -51,7 +53,9 @@ export default function PayslipPage() {
     return () => clearInterval(t);
   }, [load]);
   useEffect(() => {
-    if (id !== null) setReceipts(receiptsFor(id));
+    if (id === null) return;
+    setReceipts(receiptsFor(id));
+    fetchWithdrawals(id).then(setHistory);
   }, [id]);
 
   const status = payslip ? payslipStatus(payslip, chainNow()) : undefined;
@@ -190,18 +194,35 @@ export default function PayslipPage() {
         </div>
       </div>
 
-      {receipts.length > 0 && (
+      {history && history.length > 0 ? (
         <div className="card stack" style={{ gap: 0 }}>
           <div className="eyebrow" style={{ marginBottom: 8 }}>
-            Receipts
+            Withdrawals
           </div>
-          {receipts.map((h) => (
-            <Link key={h} href={`/receipt/${h}`} className="kv" style={{ textDecoration: "none" }}>
-              <span>Withdrawal</span>
-              <span className="mono">{shortHash(h)} →</span>
+          {history.map((w) => (
+            <Link key={w.txHash} href={`/receipt/${w.txHash}`} className="kv history-row" style={{ textDecoration: "none" }}>
+              <span>{formatDate(w.timestamp)}</span>
+              <span className="money-inline" style={{ color: "var(--text-primary)" }}>
+                {formatLocal(Number(w.localAmount) / 1e6, currency.code)} →
+              </span>
             </Link>
           ))}
         </div>
+      ) : (
+        !history &&
+        receipts.length > 0 && (
+          <div className="card stack" style={{ gap: 0 }}>
+            <div className="eyebrow" style={{ marginBottom: 8 }}>
+              Receipts
+            </div>
+            {receipts.map((h) => (
+              <Link key={h} href={`/receipt/${h}`} className="kv" style={{ textDecoration: "none" }}>
+                <span>Withdrawal</span>
+                <span className="mono">{shortHash(h)} →</span>
+              </Link>
+            ))}
+          </div>
+        )
       )}
     </div>
   );

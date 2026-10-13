@@ -1,0 +1,26 @@
+# Local Hardhat chain (contracts/deployments/localhost.json), indexed over RPC.
+name: spraycash-indexer
+field_selection:
+  transaction_fields:
+    - hash
+chains:
+  - id: 31337
+    start_block: 0
+    rpc:
+      url: http://127.0.0.1:8545
+      for: sync
+    contracts:
+      - name: SpraycashPayroll
+        address: "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9"
+        abi_file_path: abis/SpraycashPayroll.json
+        events:
+          - event: PayslipCreated(uint256 indexed id, address indexed employer, bytes32 indexed currency, uint256 lockedRate, uint128 deposit, uint64 start, uint64 end, uint64 claimDeadline, address claimSigner)
+          - event: PayslipClaimed(uint256 indexed id, address indexed freelancer)
+          - event: Withdrawn(uint256 indexed id, address indexed freelancer, uint128 amount, uint256 localAmount)
+          - event: PayslipStopped(uint256 indexed id, uint128 earned, uint128 refunded)
+          - event: UnclaimedRefunded(uint256 indexed id, uint128 refunded)
+      - name: FxRateReceiver
+        address: "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0"
+        abi_file_path: abis/FxRateReceiver.json
+        events:
+          - event: RateUpdated(bytes32 indexed currency, uint256 value, uint8 sources, uint64 observedAt)

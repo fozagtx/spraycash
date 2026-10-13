@@ -29,3 +29,6 @@ export const isConfigured = Object.values(addresses).every((a) => a !== zero);
 
 export const explorerTx = (hash: string) => `${chain.blockExplorers.default.url}/tx/${hash}`;
 export const explorerAddress = (address: string) => `${chain.blockExplorers.default.url}/address/${address}`;
+
+/** Envio HyperIndex GraphQL endpoint for payslip history. Empty until the hosted indexer is deployed. */
+export const indexerUrl = chain.id === 31337 ? "http://127.0.0.1:8080/v1/graphql" : "";
