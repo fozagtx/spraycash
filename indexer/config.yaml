@@ -1,0 +1,24 @@
+# Envio HyperIndex config for Payday on Monad testnet.
+# Fill the addresses and start_block from contracts/deployments/monadTestnet.json.
+name: payday-indexer
+field_selection:
+  transaction_fields:
+    - hash
+chains:
+  - id: 10143
+    start_block: 0
+    contracts:
+      - name: PaydayPayroll
+        address: "0x0000000000000000000000000000000000000000"
+        abi_file_path: abis/PaydayPayroll.json
+        events:
+          - event: PayslipCreated(uint256 indexed id, address indexed employer, bytes32 indexed currency, uint256 lockedRate, uint128 deposit, uint64 start, uint64 end, uint64 claimDeadline, address claimSigner)
+          - event: PayslipClaimed(uint256 indexed id, address indexed freelancer)
+          - event: Withdrawn(uint256 indexed id, address indexed freelancer, uint128 amount, uint256 localAmount)
+          - event: PayslipStopped(uint256 indexed id, uint128 earned, uint128 refunded)
+          - event: UnclaimedRefunded(uint256 indexed id, uint128 refunded)
+      - name: FxRateReceiver
+        address: "0x0000000000000000000000000000000000000000"
+        abi_file_path: abis/FxRateReceiver.json
+        events:
+          - event: RateUpdated(bytes32 indexed currency, uint256 value, uint8 sources, uint64 observedAt)

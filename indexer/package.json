@@ -1,0 +1,16 @@
+{
+  "name": "payday-indexer",
+  "private": true,
+  "scripts": {
+    "codegen": "envio codegen",
+    "dev": "envio dev",
+    "start": "envio start"
+  },
+  "dependencies": {
+    "envio": "^3.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "5.9"
+  }
+}

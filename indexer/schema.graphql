@@ -1,0 +1,44 @@
+type Payslip {
+  id: ID!
+  employer: String!
+  freelancer: String
+  currency: String!
+  lockedRate: BigInt!
+  deposit: BigInt!
+  start: BigInt!
+  end: BigInt!
+  claimDeadline: BigInt!
+  withdrawn: BigInt!
+  refunded: BigInt!
+  status: String!
+  createdAt: Int!
+  fundingTx: String!
+  withdrawals: [Withdrawal!]! @derivedFrom(field: "payslip")
+}
+
+type Withdrawal {
+  id: ID!
+  payslip: Payslip!
+  freelancer: String!
+  amount: BigInt!
+  localAmount: BigInt!
+  timestamp: Int!
+  txHash: String!
+}
+
+type RateUpdate {
+  id: ID!
+  currency: String!
+  value: BigInt!
+  sources: Int!
+  observedAt: BigInt!
+  timestamp: Int!
+  txHash: String!
+}
+
+type EmployerStats {
+  id: ID!
+  payslips: Int!
+  funded: BigInt!
+  refunded: BigInt!
+}
