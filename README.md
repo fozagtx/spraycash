@@ -197,6 +197,17 @@ The web app uses these by default (`web/src/lib/config.ts`); env vars override t
 
 CRE simulate logs with transaction hashes: `cre/logs/simulate.log`.
 
+### A real payslip on testnet
+
+Payslip #15, recorded end to end on https://spraycash.onrender.com:
+
+| Step | Time (UTC, Oct 13 2026) | Transaction |
+|---|---|---|
+| Payslip created and funded | 21:47:04 | [0xdc76...f88e](https://testnet.monadexplorer.com/tx/0xdc76d9590b84108332e0d3eee171ac6fd966381e5cd63f3041a34ead7f7ef88e) |
+| Claimed by the freelancer | 21:47:12 | [0x0fcc...5c6b](https://testnet.monadexplorer.com/tx/0x0fcce87e6dd5cbd669568d0a7347f0af7e4738e3d4134df6b52f7fd250495c6b) |
+| Withdrawal (the receipt number) | 21:47:27 | [0x3850...8f02](https://testnet.monadexplorer.com/tx/0x38501ad28bb454db2721f8676f38a0a61f4de996625c4c732597b80b445c8f02) |
+| Pay stopped, rest refunded | 21:47:35 | [0xcd73...5bb2](https://testnet.monadexplorer.com/tx/0xcd73842d6fa7fa0d228db69a119e256e8bf74612f63897d1b0749f94c6d35bb2) |
+
 ## Limitations
 
 - **Testnet AUSD:** payroll uses Agora's test AUSD on Monad testnet, funded from Agora's faucet (10,000 per request, about one a minute). `SpraycashUSD` exists only as a local stand-in. There's no off-ramp to a bank or mobile money yet.
