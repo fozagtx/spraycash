@@ -56,7 +56,7 @@ export default function Home() {
             <h1 className="display hero-title">
               Payroll for the rest
               <br />
-              of the <Ring>world.</Ring>
+              of <Ring>us all.</Ring>
             </h1>
             <p className="lede" style={{ margin: "0 auto" }}>
               Pay anyone, anywhere, by the second.

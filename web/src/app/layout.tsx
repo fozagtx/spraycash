@@ -40,7 +40,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 />
               </div>
               <div className="header-actions">
-                <SoundToggle />
                 <Link href="/employer/new" className="btn btn-sm btn-ink">
                   Send pay
                 </Link>
@@ -54,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Logo size={22} />
             <span>Payroll that crosses borders as fast as the work does.</span>
             <span>Monad testnet · settled in AUSD by Agora · rates verified by Chainlink</span>
+            <SoundToggle />
           </div>
         </footer>
         </ToastProvider>
