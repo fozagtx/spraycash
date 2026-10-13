@@ -1,6 +1,5 @@
 "use client";
 
-import { Floater } from "@/components/Landing";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { encodeFunctionData } from "viem";
@@ -160,8 +159,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
       </div>
 
       <div className="stats">
-        <div className="card card-coin">
-          <Floater src="/landing/coin-usd.webp" width={64} depth={6} className="f-card-coin" />
+        <div className="card">
           <span className="small muted">Payroll balance · AUSD by Agora</span>
           <span className="money stat-value">
             {balance === undefined ? <Skeleton w={180} h={40} /> : <Odometer text={formatUsd(usdToNumber(balance))} />}

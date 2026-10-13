@@ -193,6 +193,9 @@ export default function NewPayslipPage() {
       </div>
 
       <div className="card">
+        <div className="form-step">
+          <span className="form-step-num">1</span>Who you&apos;re paying
+        </div>
         <div className="field">
           <label htmlFor="name">Name</label>
           <input id="name" className="input" placeholder="Priya Raman" value={name} onChange={(e) => setName(e.target.value)} />
@@ -220,6 +223,9 @@ export default function NewPayslipPage() {
           </div>
         </div>
 
+        <div className="form-step">
+          <span className="form-step-num">2</span>What you pay
+        </div>
         <div className="field">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <label htmlFor="amount">Monthly pay</label>
@@ -245,12 +251,15 @@ export default function NewPayslipPage() {
             />
           </div>
           {amount > 0 && rate > 0 && (
-            <span className="small muted fade-in">
+            <span className="small amount-hint fade-in">
               {inUsd ? `≈ ${formatLocal(monthlyLocal, currency, 0)} a month` : `≈ ${formatUsd(monthlyUsd)} a month`}
             </span>
           )}
         </div>
 
+        <div className="form-step">
+          <span className="form-step-num">3</span>When it runs
+        </div>
         <div className="row">
           <div className="field">
             <label htmlFor="period">Fund for</label>
@@ -297,10 +306,11 @@ export default function NewPayslipPage() {
       />
 
       <div className="card stack">
-        <div className="kv">
+        <div className="total-row">
           <span>You fund now</span>
-          <strong>{formatUsd(Math.max(0, fundUsd))}</strong>
+          <span className="money total-value">{formatUsd(Math.max(0, fundUsd))}</span>
         </div>
+        <hr className="divider" />
         <div className="kv">
           <span>{name.split(" ")[0] || "They"} earn per day</span>
           <span>{formatLocal(Math.max(0, monthlyLocal) / 30, currency)}</span>
