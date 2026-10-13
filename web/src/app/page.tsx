@@ -300,7 +300,7 @@ export default function Home() {
           <Floater src="/landing/note.webp" width={130} depth={10} className="f-cta-note" />
           <div className="stack">
             <h2 className="display">Payroll that crosses borders as fast as the work does.</h2>
-            <p style={{ margin: 0, opacity: 0.85 }}>Set up in a minute. Your first payslip can start streaming today.</p>
+            <p style={{ margin: "12px 0 0", opacity: 0.85 }}>Set up in a minute. Your first payslip can start streaming today.</p>
           </div>
           <Link href="/employer" className="btn btn-lg btn-light">
             Start paying
