@@ -13,7 +13,7 @@ import {
   type Payslip,
   type PayslipStatus,
 } from "@/lib/chain";
-import { addresses, isConfigured } from "@/lib/config";
+import { addresses, ausdFaucet, isConfigured } from "@/lib/config";
 import { currencyFromKey } from "@/lib/currencies";
 import { formatLocal, formatUsd, rateToNumber, usdToNumber } from "@/lib/format";
 import { sendGasless } from "@/lib/relay";
@@ -98,12 +98,23 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
   }
 
   const addFunds = () =>
-    act("funds", () =>
-      acct.withAccount(async (a) => {
+    act("funds", async () => {
+      if (ausdFaucet) {
+        // Agora's test faucet sends AUSD straight to the payroll account; no signature needed.
+        const res = await fetch("/api/faucet", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ address }),
+        });
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        if (!res.ok) throw new Error(body.error || "Couldn't add funds. Try again in a minute.");
+        return "Added $10,000 in test AUSD from Agora.";
+      }
+      return acct.withAccount(async (a) => {
         await sendGasless(a, addresses.usd, encodeFunctionData({ abi: spraycashUSDAbi, functionName: "faucet" }));
         return "Added $25,000 in demo funds.";
-      }, business),
-    );
+      }, business);
+    });
 
   const stop = (p: Payslip) =>
     act(`stop-${p.id}`, () =>
@@ -129,7 +140,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
       }, business),
     );
 
-  const lowBalance = balance !== undefined && balance < 1_000_000_000n;
+  const lowBalance = balance !== undefined && balance < 50_000_000_000n;
   const streaming = payslips?.filter((p) => payslipStatus(p, now) === "streaming") ?? [];
   const perDay = streaming.reduce((sum, p) => sum + usdToNumber(p.deposit) / ((Number(p.end) - Number(p.start)) / 86400), 0);
 
@@ -149,13 +160,13 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
 
       <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
         <div className="card" style={{ display: "grid", gap: 6, alignContent: "start" }}>
-          <span className="small muted">Payroll balance</span>
+          <span className="small muted">Payroll balance · AUSD by Agora</span>
           <span className="money" style={{ fontSize: 40 }}>
             {balance === undefined ? "…" : formatUsd(usdToNumber(balance))}
           </span>
           {lowBalance && (
             <button className="btn btn-ghost btn-sm" onClick={addFunds} disabled={busy === "funds"} style={{ justifySelf: "start" }}>
-              {busy === "funds" ? <Spinner /> : null} Add demo funds
+              {busy === "funds" ? <Spinner /> : null} {ausdFaucet ? "Add $10,000 test AUSD" : "Add demo funds"}
             </button>
           )}
         </div>

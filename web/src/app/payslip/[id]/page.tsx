@@ -132,7 +132,7 @@ export default function PayslipPage() {
           <span className="small muted">Ready to withdraw</span>
           <HeroAmount amount={availableUsd * rate} code={currency.code} />
           <span className="small muted">
-            ≈ {formatUsd(availableUsd, availableUsd < 1 ? 4 : 2)} USD · rate locked {rate.toFixed(2)}
+            ≈ {formatUsd(availableUsd, availableUsd < 1 ? 4 : 2)} AUSD · rate locked {rate.toFixed(2)}
           </span>
         </div>
 

@@ -2,20 +2,21 @@
 pragma solidity ^0.8.24;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
 
 /// @title SpraycashUSD
-/// @notice Demo dollar token for testnet payroll (6 decimals, like USDC).
+/// @notice Local/dev stand-in for AUSD (6 decimals, EIP-2612 permit). On Monad testnet Spraycash uses real AUSD.
 /// Anyone can top up a low balance from the faucet so demos never run dry.
 /// Supports gasless calls through the Spraycash forwarder (ERC-2771).
-contract SpraycashUSD is ERC20, ERC2771Context {
+contract SpraycashUSD is ERC20, ERC20Permit, ERC2771Context {
     uint256 public constant FAUCET_AMOUNT = 25_000e6;
     uint256 public constant FAUCET_THRESHOLD = 1_000e6;
 
     error FaucetNotNeeded(uint256 balance);
 
-    constructor(address trustedForwarder) ERC20("Spraycash USD", "scUSD") ERC2771Context(trustedForwarder) {}
+    constructor(address trustedForwarder) ERC20("Spraycash USD", "scUSD") ERC20Permit("Spraycash USD") ERC2771Context(trustedForwarder) {}
 
     function decimals() public pure override returns (uint8) {
         return 6;

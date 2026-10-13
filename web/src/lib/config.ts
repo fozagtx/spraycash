@@ -22,6 +22,9 @@ export const addresses = {
   forwarder: (process.env.NEXT_PUBLIC_FORWARDER_ADDRESS || zero) as Address,
 };
 
+/** Agora's AUSD faucet on Monad testnet. When set, "Add funds" requests real test AUSD from it. */
+export const ausdFaucet = (process.env.NEXT_PUBLIC_AUSD_FAUCET_ADDRESS || "") as Address | "";
+
 export const isConfigured = Object.values(addresses).every((a) => a !== zero);
 
 export const explorerTx = (hash: string) => `${chain.blockExplorers.default.url}/tx/${hash}`;

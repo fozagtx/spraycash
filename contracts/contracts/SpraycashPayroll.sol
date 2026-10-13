@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import {Context} from "@openzeppelin/contracts/utils/Context.sol";
@@ -12,7 +13,7 @@ import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/Messa
 import {FxRateReceiver} from "./FxRateReceiver.sol";
 
 /// @title SpraycashPayroll
-/// @notice Escrowed payslips that stream USD to a freelancer every second, at an FX rate
+/// @notice Escrowed payslips that stream dollars (AUSD by Agora on Monad) to a freelancer every second, at an FX rate
 /// locked from a fresh Chainlink CRE report at the moment the employer hits pay.
 ///
 /// Lifecycle: create (employer funds) -> claim (freelancer binds their account via the claim link)
@@ -116,6 +117,46 @@ contract SpraycashPayroll is ERC2771Context, Ownable, ReentrancyGuard {
         address claimSigner,
         uint64 claimWindow
     ) external nonReentrant returns (uint256 id) {
+        return _createPayslip(currency, quotedRate, quotedAt, amount, start, duration, claimSigner, claimWindow);
+    }
+
+    struct Permit {
+        uint256 deadline;
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+    }
+
+    /// @notice Same as createPayslip, but first applies an EIP-2612 permit signed by the employer, so
+    /// funding with AUSD (Agora) needs a single gasless request and no separate approval.
+    /// A permit that fails (e.g. already used, front-run) is ignored if the allowance is already enough.
+    function createPayslipWithPermit(
+        bytes32 currency,
+        uint256 quotedRate,
+        uint64 quotedAt,
+        uint128 amount,
+        uint64 start,
+        uint64 duration,
+        address claimSigner,
+        uint64 claimWindow,
+        Permit calldata permit
+    ) external nonReentrant returns (uint256 id) {
+        try IERC20Permit(address(usd)).permit(
+            _msgSender(), address(this), amount, permit.deadline, permit.v, permit.r, permit.s
+        ) {} catch {}
+        return _createPayslip(currency, quotedRate, quotedAt, amount, start, duration, claimSigner, claimWindow);
+    }
+
+    function _createPayslip(
+        bytes32 currency,
+        uint256 quotedRate,
+        uint64 quotedAt,
+        uint128 amount,
+        uint64 start,
+        uint64 duration,
+        address claimSigner,
+        uint64 claimWindow
+    ) private returns (uint256 id) {
         (uint256 rate, uint64 updatedAt,, uint64 updatedBlock) = fx.getRate(currency);
         if (rate == 0) revert UnsupportedCurrency(currency);
         if (block.timestamp > uint256(updatedAt) + maxRateAge) revert StaleRate(updatedAt, maxRateAge);

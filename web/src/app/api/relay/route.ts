@@ -27,9 +27,10 @@ export const runtime = "nodejs";
 const ALLOWED: Record<string, { abi: Abi; functions: string[] }> = {
   payroll: {
     abi: spraycashPayrollAbi as Abi,
-    functions: ["createPayslip", "claim", "withdraw", "stop", "refundUnclaimed"],
+    functions: ["createPayslip", "createPayslipWithPermit", "claim", "withdraw", "stop", "refundUnclaimed"],
   },
-  usd: { abi: spraycashUSDAbi as Abi, functions: ["faucet", "approve"] },
+  // Local stand-in dollar only; with AUSD, funding goes through /api/faucet and permits.
+  usd: { abi: spraycashUSDAbi as Abi, functions: ["faucet"] },
 };
 
 const MAX_GAS = 1_000_000n;

@@ -217,6 +217,49 @@ describe("SpraycashPayroll", () => {
     expect(events[0].args.localAmount).to.equal((balance * RATE_INR) / 10n ** 8n);
   });
 
+  it("funds a payslip in one gasless request with an EIP-2612 permit (AUSD path), no prior approval", async () => {
+    const ctx = await deploy();
+    await ctx.pushRate();
+    const employer = privateKeyToAccount(generatePrivateKey());
+    // Give the fresh employer dollars but no approval and no gas.
+    await forwardCall(ctx, employer, ctx.usd.address, encodeFunctionData({ abi: ctx.usd.abi, functionName: "faucet" }));
+    expect(await ctx.usd.read.allowance([employer.address, ctx.payroll.address])).to.equal(0n);
+
+    const amount = USD("1500");
+    const chainId = await ctx.publicClient.getChainId();
+    const deadline = BigInt(await time.latest()) + 3600n;
+    const nonce = await ctx.usd.read.nonces([employer.address]);
+    const sig = await employer.signTypedData({
+      domain: { name: "Spraycash USD", version: "1", chainId, verifyingContract: ctx.usd.address },
+      types: {
+        Permit: [
+          { name: "owner", type: "address" },
+          { name: "spender", type: "address" },
+          { name: "value", type: "uint256" },
+          { name: "nonce", type: "uint256" },
+          { name: "deadline", type: "uint256" },
+        ],
+      },
+      primaryType: "Permit",
+      message: { owner: employer.address, spender: ctx.payroll.address, value: amount, nonce, deadline },
+    });
+    const r = `0x${sig.slice(2, 66)}` as Hex;
+    const s = `0x${sig.slice(66, 130)}` as Hex;
+    const v = parseInt(sig.slice(130, 132), 16);
+
+    const [rate, updatedAt] = await ctx.fx.read.getRate([INR]);
+    const claimSigner = privateKeyToAccount(generatePrivateKey()).address;
+    await forwardCall(ctx, employer, ctx.payroll.address, encodeFunctionData({
+      abi: ctx.payroll.abi,
+      functionName: "createPayslipWithPermit",
+      args: [INR, rate, updatedAt, amount, 0n, MONTH, claimSigner, 86400n, { deadline, v, r, s }],
+    }));
+    const id = (await ctx.payroll.read.nextId()) - 1n;
+    expect((await ctx.payroll.read.getPayslip([id])).deposit).to.equal(amount);
+    expect(await ctx.usd.read.balanceOf([ctx.payroll.address])).to.equal(amount);
+    expect(await ctx.publicClient.getBalance({ address: employer.address })).to.equal(0n);
+  });
+
   it("stop keeps earned pay with the freelancer and refunds the rest instantly", async () => {
     const ctx = await deploy();
     await ctx.pushRate();

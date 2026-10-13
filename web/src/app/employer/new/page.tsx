@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { encodeFunctionData, parseEventLogs, type Hex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { spraycashPayrollAbi, spraycashUSDAbi } from "@/lib/abi";
-import { publicClient, readAllowance, readUsdBalance, type Quote } from "@/lib/chain";
+import { spraycashPayrollAbi } from "@/lib/abi";
+import { chainNow, publicClient, readUsdBalance, type Quote } from "@/lib/chain";
+import { signPermit } from "@/lib/permit";
 import { addresses, isConfigured } from "@/lib/config";
 import { CURRENCIES, CURRENCY_LIST, currencyKey, type CurrencyCode } from "@/lib/currencies";
 import { formatLocal, formatUsd, rateToNumber, usdToNumber } from "@/lib/format";
@@ -82,20 +83,8 @@ export default function NewPayslipPage() {
         const bal = await readUsdBalance(account.address);
         if (bal < amountUnits) throw new Error("That's more than your payroll balance. Add funds first.");
 
-        if ((await readAllowance(account.address)) < amountUnits) {
-          setStep("Setting up your payroll balance…");
-          await sendGasless(
-            account,
-            addresses.usd,
-            encodeFunctionData({
-              abi: spraycashUSDAbi,
-              functionName: "approve",
-              args: [addresses.payroll, 2n ** 256n - 1n],
-            }),
-          );
-        }
-
         setStep("Funding payslip…");
+        const permit = await signPermit(account, addresses.payroll, amountUnits, BigInt(Math.floor(chainNow()) + 3600));
         const claimKey = generatePrivateKey();
         const claimSigner = privateKeyToAccount(claimKey).address;
         const hash = await sendGasless(
@@ -103,7 +92,7 @@ export default function NewPayslipPage() {
           addresses.payroll,
           encodeFunctionData({
             abi: spraycashPayrollAbi,
-            functionName: "createPayslip",
+            functionName: "createPayslipWithPermit",
             args: [
               currencyKey(currency),
               locked.rate,
@@ -113,6 +102,7 @@ export default function NewPayslipPage() {
               BigInt(period),
               claimSigner,
               BigInt(linkWindow),
+              permit,
             ],
           }),
           800_000n,
@@ -314,7 +304,7 @@ export default function NewPayslipPage() {
           <span>{monthlyLocal > 0 ? formatLocal(monthlyLocal / 30, currency) : "—"}</span>
         </div>
         <div className="kv">
-          <span>Payroll balance</span>
+          <span>Payroll balance (AUSD)</span>
           <span>{balance === undefined ? "…" : formatUsd(usdToNumber(balance))}</span>
         </div>
         {overBudget && (

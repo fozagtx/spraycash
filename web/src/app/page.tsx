@@ -53,7 +53,7 @@ export default function Home() {
               Pay your team anywhere. <em className="accent-italic">They get paid every second.</em>
             </h1>
             <p className="lede">
-              Fund payroll in dollars. Your freelancers watch their earnings grow in their own currency, at a rate locked
+              Fund payroll in AUSD, the digital dollar by Agora. Your freelancers watch their earnings grow in their own currency, at a rate locked
               the moment you hit pay.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
@@ -68,6 +68,7 @@ export default function Home() {
               <li>Sign in with Face ID</li>
               <li>No fees to withdraw</li>
               <li>Stop any time</li>
+              <li>Settled in AUSD by Agora</li>
             </ul>
           </div>
           <LandingDemo />
@@ -77,7 +78,7 @@ export default function Home() {
       {/* ---------------------------------------------------------- corridors */}
       <section className="band">
         <div className="container corridors">
-          <span className="small muted corridors-label">You pay in dollars. They see:</span>
+          <span className="small muted corridors-label">You pay in AUSD dollars. They see:</span>
           {CORRIDORS.map((c) => (
             <span key={c.code} className="corridor">
               <span className="flag flag-lg" style={{ background: c.flag }} aria-hidden />
@@ -167,7 +168,7 @@ export default function Home() {
             <span className="eyebrow">For clients</span>
             <h3 className="display h3">One balance. Every country.</h3>
             <ul className="list">
-              <li>Fund payroll once, in dollars</li>
+              <li>Fund payroll once, in AUSD dollars from Agora</li>
               <li>See every freelancer, what they&apos;ve earned and what&apos;s left, live</li>
               <li>Stop pay any time and unearned money returns instantly</li>
               <li>No per-country paperwork or payment rails</li>

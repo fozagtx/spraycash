@@ -147,6 +147,15 @@ export default function ReceiptPage() {
             </span>
           </div>
           <div className="receipt-row">
+            <span className="muted">Paid in</span>
+            <span>
+              AUSD by Agora
+              <a className="verify" href={explorerAddress(addresses.usd)} target="_blank" rel="noreferrer">
+                Verify
+              </a>
+            </span>
+          </div>
+          <div className="receipt-row">
             <span className="muted">Fees</span>
             <span>None</span>
           </div>

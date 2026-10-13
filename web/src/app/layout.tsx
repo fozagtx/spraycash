@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="container footer-inner">
             <Logo size={22} />
             <span>Payroll that crosses borders as fast as the work does.</span>
-            <span>Test network · demo dollars · rates verified by Chainlink</span>
+            <span>Monad testnet · settled in AUSD by Agora · rates verified by Chainlink</span>
           </div>
         </footer>
       </body>
