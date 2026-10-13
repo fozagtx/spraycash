@@ -1,0 +1,31 @@
+{
+  "name": "payday-contracts",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:monad": "hardhat run scripts/deploy.ts --network monadTestnet",
+    "export-abi": "hardhat run scripts/export-abi.ts",
+    "push-rate:monad": "hardhat run scripts/push-rate.ts --network monadTestnet"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.1.2",
+    "@nomicfoundation/hardhat-network-helpers": "^1.1.2",
+    "@nomicfoundation/hardhat-viem": "^2.1.5",
+    "@types/chai": "^4.3.20",
+    "@types/chai-as-promised": "^7.1.8",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.6.5",
+    "chai": "^4.5.0",
+    "chai-as-promised": "^7.1.2",
+    "hardhat": "^2.29.1",
+    "solc": "^0.8.28",
+    "ts-node": "^10.9.2",
+    "typescript": "5.9",
+    "viem": "^2.57.5"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0"
+  }
+}

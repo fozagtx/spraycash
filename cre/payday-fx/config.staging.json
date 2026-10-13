@@ -1,0 +1,15 @@
+{
+  "schedule": "0 * * * * *",
+  "currencies": ["INR", "MXN", "PHP", "NGN"],
+  "singleSourceAllowed": ["NGN"],
+  "maxDeviationBps": 100,
+  "sources": {
+    "frankfurter": "https://api.frankfurter.app/latest?from=USD&to=INR,MXN,PHP",
+    "erApi": "https://open.er-api.com/v6/latest/USD"
+  },
+  "evm": {
+    "chainSelectorName": "monad-testnet",
+    "receiverAddress": "0x0000000000000000000000000000000000000000",
+    "gasLimit": "500000"
+  }
+}

@@ -1,0 +1,5 @@
+# CRE project settings. RPC for Monad testnet is used by `cre workflow simulate --broadcast`.
+staging-settings:
+  rpcs:
+    - chain-name: monad-testnet
+      url: https://testnet-rpc.monad.xyz
