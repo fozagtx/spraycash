@@ -51,6 +51,7 @@ export default function Home() {
           <Floater src="/landing/coin-usd.webp" width={92} depth={18} className="f-usd" />
           <Floater src="/landing/coin-inr.webp" width={104} depth={-22} className="f-inr" />
           <Floater src="/landing/coin-php.webp" width={78} depth={14} className="f-php" />
+          <Floater src="/landing/coin-ngn.webp" width={84} depth={-16} className="f-ngn" />
           <Floater src="/landing/note.webp" width={150} depth={-12} className="f-note" />
           <div className="container hero-center stack-lg">
             <h1 className="display hero-title">

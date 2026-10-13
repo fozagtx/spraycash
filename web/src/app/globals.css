@@ -666,3 +666,12 @@ body { color: var(--text-primary); }
 .header > .container { display: flex; justify-content: center; }
 .header-inner { width: fit-content; max-width: 100%; gap: 28px; }
 @media (max-width: 720px) { .header-inner { gap: 10px; } }
+
+/* coins: naira + phone placement inside the screen */
+.f-ngn { left: 20%; top: 280px; rotate: 10deg; }
+@media (max-width: 720px) {
+  .hero-sky .f-ngn { display: block; }
+  .hero-sky .f-usd { left: 10px; top: 236px; width: 50px !important; rotate: -10deg; }
+  .hero-sky .f-ngn { left: 38%; top: 262px; width: 42px !important; }
+  .hero-sky .f-inr { right: 12px; top: 228px; width: 52px !important; }
+}
