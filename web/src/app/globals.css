@@ -440,6 +440,8 @@ h2.display { font-size: clamp(30px, 4vw, 40px); }
 .routes.in .routes-lines path { opacity: 0.3; }
 .routes.in .routes-lines path.on { opacity: 1; stroke: var(--accent); stroke-width: 2.5; }
 @keyframes march { to { stroke-dashoffset: -0.048; } }
+.route-coin { fill: var(--accent); stroke: var(--surface); stroke-width: 1.5; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 3px rgba(15, 107, 79, 0.45)); }
+.pin:not(.pin-home) .pin-card { bottom: auto; top: calc(100% + 10px); transform-origin: top center; transform: translate(-50%, -4px) scale(0.97); }
 .pin { position: absolute; transform: translate(-50%, -50%) scale(0.6); opacity: 0; padding: 0; border: 0; background: none; cursor: pointer; font: inherit; color: inherit; transition: opacity var(--duration-fast) ease-out calc(300ms + var(--i, 0) * 120ms), transform var(--duration-medium) var(--ease-bounce) calc(300ms + var(--i, 0) * 120ms); }
 .routes.in .pin { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .pin-dot { display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--line), 0 0 0 6px rgba(15, 107, 79, 0.14); transition: transform var(--duration-quick) var(--ease-smooth-out); }

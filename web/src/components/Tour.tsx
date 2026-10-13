@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { getLenis } from "./smooth-scroll";
 
 export type TourStep = { target: string; title: string; body: string };
 
@@ -51,7 +52,9 @@ export function Tour({ id, steps }: { id: string; steps: TourStep[] }) {
     if (!step) return;
     const el = find(step.target);
     if (!el) return;
-    el.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    const lenis = getLenis();
+    if (lenis) lenis.scrollTo(el, { offset: -Math.max(0, (innerHeight - el.getBoundingClientRect().height) / 2), duration: 0.9 });
+    else el.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     let frame = 0;
     let prev = "";
     const track = () => {

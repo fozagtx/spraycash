@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { NavLinks, SoundToggle, ToastProvider } from "@/components/Motion";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <SmoothScroll />
         <ToastProvider>
         <header className="header">
           <div className="container">

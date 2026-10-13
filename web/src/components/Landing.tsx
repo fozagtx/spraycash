@@ -84,44 +84,75 @@ const PLACES = [
   { id: "blr", name: "Priya", city: "Bengaluru", amount: "₹1,25,000", x: 67.6, y: 52.5 },
   { id: "mnl", name: "Ana", city: "Manila", amount: "₱84,000", x: 77.1, y: 49.9 },
 ];
-const HOME = { x: 28.1, y: 41.2 };
+const HOMES = [
+  { id: "nyc", name: "Acme Studio", city: "New York", x: 28.1, y: 41.2 },
+  { id: "ldn", name: "Kite & Co", city: "London", x: 46.4, y: 33.2 },
+];
+const ROUTES = [
+  { from: "nyc", to: "mex" },
+  { from: "nyc", to: "los" },
+  { from: "nyc", to: "blr" },
+  { from: "nyc", to: "mnl" },
+  { from: "ldn", to: "los" },
+  { from: "ldn", to: "blr" },
+];
 const H = 66.4;
+
+function arc(from: { x: number; y: number }, to: { x: number; y: number }) {
+  const x1 = from.x, y1 = (from.y * H) / 100, x2 = to.x, y2 = (to.y * H) / 100;
+  const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
+  let nx = dy / len, ny = -dx / len;
+  if (ny > 0) (nx = -nx), (ny = -ny);
+  const bend = len * 0.22;
+  return `M${x1} ${y1} Q${(x1 + x2) / 2 + nx * bend} ${(y1 + y2) / 2 + ny * bend} ${x2} ${y2}`;
+}
 
 export function WorldRoutes() {
   const [ref, inView] = useInView<HTMLDivElement>(0.35);
-  const [active, setActive] = useState("blr");
+  const [active, setActive] = useState("los");
+  const [still, setStill] = useState(true);
+  useEffect(() => setStill(matchMedia("(prefers-reduced-motion: reduce)").matches), []);
   return (
     <div ref={ref} className={`routes${inView ? " in" : ""}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="routes-map" src="/landing/map.webp" alt="" draggable={false} />
       <svg className="routes-lines" viewBox={`0 0 100 ${H}`} aria-hidden>
-        {PLACES.map((p, i) => {
-          const x1 = HOME.x, y1 = (HOME.y * H) / 100, x2 = p.x, y2 = (p.y * H) / 100;
-          const cx = (x1 + x2) / 2, cy = Math.min(y1, y2) - Math.abs(x2 - x1) * 0.28;
-          return (
-            <path
-              key={p.id}
-              d={`M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}`}
-              pathLength={1}
-              className={active === p.id ? "on" : ""}
-              style={{ "--i": i } as CSSProperties}
-            />
-          );
-        })}
+        {ROUTES.map((r, i) => (
+          <path
+            key={`${r.from}-${r.to}`}
+            id={`route-${i}`}
+            d={arc(HOMES.find((h) => h.id === r.from)!, PLACES.find((p) => p.id === r.to)!)}
+            pathLength={1}
+            className={active === r.to ? "on" : ""}
+            style={{ "--i": i } as CSSProperties}
+          />
+        ))}
+        {inView &&
+          !still &&
+          ROUTES.map((r, i) => (
+            <circle key={`coin-${i}`} r={active === r.to ? 0.7 : 0.45} className={`route-coin${active === r.to ? " on" : ""}`} opacity={0}>
+              <animateMotion dur="3.6s" begin={`${0.6 + i * 0.55}s`} repeatCount="indefinite" calcMode="spline" keyPoints="0;1" keyTimes="0;1" keySplines="0.45 0 0.35 1">
+                <mpath href={`#route-${i}`} />
+              </animateMotion>
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.86;1" dur="3.6s" begin={`${0.6 + i * 0.55}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
       </svg>
-      <span className="pin pin-home" style={{ left: `${HOME.x}%`, top: `${HOME.y}%` }}>
-        <span className="pin-dot" />
-        <span className="pin-card">
-          <strong>Acme Studio</strong>
-          <span className="small muted">New York · pays in AUSD</span>
+      {HOMES.map((h, i) => (
+        <span key={h.id} className="pin pin-home" style={{ left: `${h.x}%`, top: `${h.y}%`, "--i": i } as CSSProperties}>
+          <span className="pin-dot" />
+          <span className="pin-card">
+            <strong>{h.name}</strong>
+            <span className="small muted">{h.city} · pays in AUSD</span>
+          </span>
         </span>
-      </span>
+      ))}
       {PLACES.map((p, i) => (
         <button
           key={p.id}
           type="button"
           className={`pin${active === p.id ? " on" : ""}`}
-          style={{ left: `${p.x}%`, top: `${p.y}%`, "--i": i } as CSSProperties}
+          style={{ left: `${p.x}%`, top: `${p.y}%`, "--i": i + HOMES.length } as CSSProperties}
           onMouseEnter={() => setActive(p.id)}
           onFocus={() => setActive(p.id)}
           onClick={() => {
