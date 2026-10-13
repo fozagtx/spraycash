@@ -84,8 +84,10 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
 | **Chainlink CRE** | Cron workflow: 2 HTTP sources → median → reject >1% → DON consensus (median per field) → signed report → `FxRateReceiver.onReport` (forwarder-only, optional workflow-owner check, replay-safe) | `cre/spraycash-fx/` |
 | **Mera**: best UX | Passkey sign-in for both sides; no seed phrase, no extension | `web/src/lib/passkey.ts` |
 | **Mera**: one passkey, many keys | HKDF-derived account per client from one PRF secret; "My pay" shows each account | `web/src/lib/passkey.ts`, `web/src/app/me` |
-| **Envio** | HyperIndex indexer for payslips, withdrawals, refunds and rate updates | `indexer/` |
+| **Envio** | HyperIndex indexer for payslips, withdrawals, refunds and rate updates; feeds the "Withdrawals" card on each payslip (falls back to reading the contracts) | `indexer/`, `web/src/app/api/history` |
+| **Monad** | Payroll, rate receiver and gasless forwarder are deployed on Monad testnet; pay streams and settles by the second | `contracts/` |
 | Alchemy | Monad RPC (URL in `web/src/lib/config.ts`) | |
+| Kimi K3 via Devin | The UI was made with Kimi K3 via Devin | `web/` |
 
 ## Repo layout
 
