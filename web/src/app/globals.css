@@ -534,3 +534,6 @@ h2.display { font-size: clamp(30px, 4vw, 40px); }
 .total-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s2); }
 .total-row > span:first-child { font-weight: 500; }
 .total-value { font-size: 36px; line-height: 1; }
+.money-inline { font-variant-numeric: tabular-nums; }
+.problem-card { display: grid; justify-items: start; }
+.problem-icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fdecea; color: var(--danger); }

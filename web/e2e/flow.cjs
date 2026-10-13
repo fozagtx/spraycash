@@ -72,6 +72,7 @@ async function rpc(method, params = []) {
   await fp.click("button:has-text('Withdraw')");
   await fp.waitForURL(/\/receipt\//, { timeout: 30000 });
   await fp.waitForSelector("text=Payslip receipt", { timeout: 30000 });
+  await fp.waitForTimeout(1200);
   await fp.screenshot({ path: `${OUT}/07-receipt.png`, fullPage: true });
   log("receipt", await fp.textContent(".receipt .money"));
 

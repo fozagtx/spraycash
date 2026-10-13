@@ -151,7 +151,8 @@ export default function PayslipPage() {
 
         <button className="btn btn-accent btn-block" onClick={withdraw} disabled={busy || availableUsd <= 0 || unclaimed}>
           {busy ? <Spinner /> : null}
-          <Morph>{busy ? "Withdrawing…" : `Withdraw ${formatLocal(availableUsd * rate, currency.code)}`}</Morph>
+          <Morph>{busy ? "Withdrawing…" : "Withdraw"}</Morph>
+          {busy ? null : <span className="money-inline">{formatLocal(availableUsd * rate, currency.code)}</span>}
         </button>
         {!isMine && !unclaimed && acct.ready && (
           <p className="small muted" style={{ margin: 0 }}>
