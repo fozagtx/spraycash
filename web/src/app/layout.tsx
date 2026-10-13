@@ -26,18 +26,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <ToastProvider>
         <header className="header">
-          <div className="container header-inner">
-            <Link href="/" className="brand" aria-label="Spraycash home">
-              <Logo />
-            </Link>
-            <div className="header-actions">
-              <NavLinks
-                links={[
-                  { href: "/employer", label: "Run payroll" },
-                  { href: "/me", label: "My pay" },
-                ]}
-              />
-              <SoundToggle />
+          <div className="container">
+            <div className="header-inner">
+              <div className="header-left">
+                <Link href="/" className="brand" aria-label="Spraycash home">
+                  <Logo />
+                </Link>
+                <NavLinks
+                  links={[
+                    { href: "/employer", label: "Run payroll" },
+                    { href: "/me", label: "My pay" },
+                  ]}
+                />
+              </div>
+              <div className="header-actions">
+                <SoundToggle />
+                <Link href="/employer/new" className="btn btn-sm btn-ink">
+                  Send pay
+                </Link>
+              </div>
             </div>
           </div>
         </header>

@@ -40,11 +40,9 @@ export default function MyPayPage() {
 
   return (
     <div className="narrow page stack-lg reveal">
-      <div className="stack" style={{ gap: 6 }}>
-        <h1 className="display" style={{ fontSize: 44 }}>
-          My pay
-        </h1>
-        <p className="muted" style={{ margin: 0 }}>
+      <div className="page-intro">
+        <h1 className="display">My pay</h1>
+        <p>
           One passkey, a separate account for each client, so every income stream stays cleanly apart.
         </p>
       </div>
@@ -56,7 +54,7 @@ export default function MyPayPage() {
           <Skeleton w="100%" h={36} />
         </div>
       ) : clients.length === 0 ? (
-        <div className="card stack">
+        <div className="card empty">
           <span className="empty-mark" style={{ color: "var(--accent)" }} aria-hidden>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" />
@@ -64,9 +62,12 @@ export default function MyPayPage() {
             </svg>
           </span>
           <strong>No pay on this device yet</strong>
-          <p className="muted small" style={{ margin: 0 }}>
+          <p className="muted" style={{ margin: 0, maxWidth: "40ch" }}>
             Open the pay link your client sent you. After you continue with your passkey, your pay shows up here.
           </p>
+          <Link href="/" className="btn btn-ghost btn-sm" style={{ marginTop: 8 }}>
+            How Spraycash works
+          </Link>
         </div>
       ) : (
         clients.map((c) => (
