@@ -629,3 +629,35 @@ body { color: var(--text-primary); }
 .table th:last-child, .table td:last-child { padding-right: 24px; }
 .kv span:first-child { color: var(--text-tertiary); }
 .header .nav a { transition: color var(--duration-hover) linear; }
+
+/* sky hero */
+.hero-sky { margin-top: -68px; padding-top: calc(68px + var(--s5) + 24px); background: #9ccbf0 url("/landing/sky-hill.webp") center bottom / cover no-repeat; }
+.hero-sky .lede { color: #2c3a48; font-size: 20px; }
+.hero-sky .hero-title { color: #101820; }
+.sky { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.sky-cloud { position: absolute; left: 0; max-width: none; height: auto; user-select: none; animation: drift var(--dur) linear var(--delay) infinite; will-change: transform; }
+@keyframes drift { from { transform: translateX(-100%); } to { transform: translateX(100vw); } }
+.butterfly { position: absolute; z-index: 1; animation: flutter var(--dur) ease-in-out var(--delay) infinite; }
+.butterfly img { display: block; width: 100%; height: auto; transform-origin: 50% 50%; animation: flap var(--flap) ease-in-out infinite alternate; filter: drop-shadow(0 6px 8px rgba(16, 24, 32, 0.18)); }
+@keyframes flap { from { transform: scaleX(1); } to { transform: scaleX(0.45); } }
+@keyframes flutter {
+  0% { translate: 0 0; rotate: -8deg; }
+  25% { translate: 40px -36px; rotate: 6deg; }
+  50% { translate: 10px -70px; rotate: -4deg; }
+  75% { translate: -36px -30px; rotate: 10deg; }
+  100% { translate: 0 0; rotate: -8deg; }
+}
+.ring-word { position: relative; display: inline-block; font-style: italic; padding: 0 0.12em; }
+.ring-word svg { position: absolute; left: -4%; top: -14%; width: 110%; height: 128%; overflow: visible; pointer-events: none; }
+.ring-word path { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 900ms var(--ease-smooth-out) calc(500ms + var(--delay, 0ms)) forwards; }
+.hero-sky .papers { margin-top: calc(var(--s5) + 40px); }
+@media (max-width: 720px) {
+  .hero-sky { margin-top: -64px; padding-top: calc(64px + var(--s4) + 16px); background-size: auto 100%; }
+  .hero-sky .lede { font-size: 17px; }
+  .butterfly:nth-of-type(n + 4) { display: none; }
+  .sky-cloud { scale: 0.6; transform-origin: left top; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky-cloud, .butterfly, .butterfly img { animation: none !important; }
+  .ring-word path { stroke-dashoffset: 0; }
+}

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Accordion } from "@/components/Motion";
 import { LandingDemo } from "@/components/LandingDemo";
 import { LogoMark } from "@/components/Logo";
-import { FeatureCards, FloatStage, Floater, Marquee, Scribble, StampIn, WorldRoutes } from "@/components/Landing";
+import { FeatureCards, FloatStage, Floater, Marquee, Ring, Scribble, Sky, StampIn, WorldRoutes } from "@/components/Landing";
 
 const CORRIDORS = [
   { flag: "linear-gradient(#FF9933 0 33%, #FFFFFF 33% 66%, #138808 66%)", country: "India", amount: "₹1,25,000", code: "INR" },
@@ -45,26 +45,21 @@ export default function Home() {
   return (
     <>
       {/* ---------------------------------------------------------------- hero */}
-      <section className="hero-v2">
+      <section className="hero-v2 hero-sky">
+        <Sky />
         <FloatStage>
           <Floater src="/landing/coin-usd.webp" width={92} depth={18} className="f-usd" />
           <Floater src="/landing/coin-inr.webp" width={104} depth={-22} className="f-inr" />
           <Floater src="/landing/coin-php.webp" width={78} depth={14} className="f-php" />
           <Floater src="/landing/note.webp" width={150} depth={-12} className="f-note" />
           <div className="container hero-center stack-lg">
-            <span className="chip chip-verified" style={{ justifySelf: "center" }}>
-              <span className="live-dot" aria-hidden /> Payroll across borders, paid every second
-            </span>
             <h1 className="display hero-title">
-              Pay your team <Scribble>anywhere.</Scribble>
+              Payroll for the rest
               <br />
-              <em className="accent-italic">
-                They get paid <Scribble delay={350}>every second.</Scribble>
-              </em>
+              of the <Ring>world.</Ring>
             </h1>
             <p className="lede" style={{ margin: "0 auto" }}>
-              Fund payroll in AUSD, the digital dollar by Agora. Your freelancers watch their earnings grow in their own currency, at a rate locked
-              the moment you hit pay.
+              Pay anyone, anywhere, by the second.
             </p>
             <div className="hero-ctas">
               <Link href="/employer" className="btn btn-accent btn-lg">

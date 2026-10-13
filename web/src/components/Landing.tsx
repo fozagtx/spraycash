@@ -249,3 +249,58 @@ export function StampIn({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
+export function Ring({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+  return (
+    <span className="ring-word">
+      {children}
+      <svg viewBox="0 0 200 64" preserveAspectRatio="none" aria-hidden style={{ "--delay": `${delay}ms` } as CSSProperties}>
+        <path d="M150 8C112 1 34 3 12 22C-6 38 30 58 98 59C160 60 198 48 194 30C191 15 160 6 118 6" pathLength={1} />
+      </svg>
+    </span>
+  );
+}
+
+const CLOUDS = [
+  { src: "/landing/cloud-a.webp", width: 520, top: "4%", duration: 120, delay: -30, opacity: 0.95 },
+  { src: "/landing/cloud-b.webp", width: 760, top: "16%", duration: 160, delay: -100, opacity: 0.75 },
+  { src: "/landing/cloud-a.webp", width: 340, top: "30%", duration: 95, delay: -60, opacity: 0.85 },
+  { src: "/landing/cloud-b.webp", width: 600, top: "44%", duration: 140, delay: -15, opacity: 0.6 },
+  { src: "/landing/cloud-a.webp", width: 440, top: "52%", duration: 110, delay: -85, opacity: 0.9 },
+];
+
+const BUTTERFLIES = [
+  { left: "7%", top: "430px", size: 46, duration: 13, delay: 0 },
+  { left: "17%", top: "540px", size: 32, duration: 11, delay: -4 },
+  { left: "50%", top: "505px", size: 62, duration: 15, delay: -2 },
+  { left: "80%", top: "410px", size: 38, duration: 12, delay: -6 },
+  { left: "90%", top: "560px", size: 30, duration: 10, delay: -3 },
+];
+
+export function Sky() {
+  return (
+    <div className="sky" aria-hidden>
+      {CLOUDS.map((c, i) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={i}
+          className="sky-cloud"
+          src={c.src}
+          alt=""
+          draggable={false}
+          style={{ width: c.width, top: c.top, opacity: c.opacity, "--dur": `${c.duration}s`, "--delay": `${c.delay}s` } as CSSProperties}
+        />
+      ))}
+      {BUTTERFLIES.map((b, i) => (
+        <span
+          key={i}
+          className="butterfly"
+          style={{ left: b.left, top: b.top, width: b.size, "--dur": `${b.duration}s`, "--delay": `${b.delay}s` } as CSSProperties}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/landing/butterfly.webp" alt="" draggable={false} style={{ "--flap": `${0.28 + i * 0.04}s` } as CSSProperties} />
+        </span>
+      ))}
+    </div>
+  );
+}
