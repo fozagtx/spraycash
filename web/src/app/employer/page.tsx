@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { encodeFunctionData } from "viem";
 import { spraycashPayrollAbi, spraycashUSDAbi } from "@/lib/abi";
 import {
@@ -77,6 +77,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
   const [balance, setBalance] = useState<bigint>();
   const [payslips, setPayslips] = useState<Payslip[]>();
   const [busy, setBusy] = useState<string>();
+  const autoFundTried = useRef(false);
   const toast = useToast();
 
   const load = useCallback(async () => {
@@ -92,7 +93,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
     return () => clearInterval(t);
   }, [load, toast]);
 
-  async function act(key: string, fn: () => Promise<string | void>) {
+  const act = useCallback(async (key: string, fn: () => Promise<string | void>) => {
     setBusy(key);
     try {
       const text = await fn();
@@ -103,10 +104,11 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
     } finally {
       setBusy(undefined);
     }
-  }
+  }, [load, toast]);
 
-  const addFunds = () =>
-    act("funds", async () => {
+  const addFunds = useCallback((isAuto = false) => {
+    if (!isAuto) autoFundTried.current = true;
+    return act("funds", async () => {
       if (ausdFaucet) {
         // Agora's test faucet sends AUSD straight to the payroll account; no signature needed.
         const res = await fetch("/api/faucet", {
@@ -116,13 +118,23 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
         });
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         if (!res.ok) throw new Error(body.error || "Couldn't add funds. Try again in a minute.");
-        return "Added $10,000 in test AUSD from Agora.";
+        if (isAuto) localStorage.setItem(`spraycash:autofunded:${address.toLowerCase()}`, "1");
+        return isAuto ? "Added $10,000 in test AUSD so you can try it." : "Added $10,000 in test AUSD from Agora.";
       }
       return acct.withAccount(async (a) => {
         await sendGasless(a, addresses.usd, encodeFunctionData({ abi: spraycashUSDAbi, functionName: "faucet" }));
         return "Added $25,000 in demo funds.";
       }, business);
     });
+  }, [act, address, acct.withAccount, business]);
+
+  useEffect(() => {
+    if (autoFundTried.current || !ausdFaucet || balance !== 0n || payslips?.length !== 0) return;
+    const key = `spraycash:autofunded:${address.toLowerCase()}`;
+    if (localStorage.getItem(key) !== null) return;
+    autoFundTried.current = true;
+    void addFunds(true);
+  }, [addFunds, address, balance, payslips]);
 
   const stop = (p: Payslip) =>
     act(`stop-${p.id}`, () =>
@@ -174,7 +186,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
             {balance === undefined ? <Skeleton w={180} h={40} /> : <Odometer text={formatUsd(usdToNumber(balance))} />}
           </span>
           {lowBalance && (
-            <button className="btn btn-ghost btn-sm" onClick={addFunds} disabled={busy === "funds"} style={{ justifySelf: "start" }}>
+            <button className="btn btn-ghost btn-sm" onClick={() => addFunds()} disabled={busy === "funds"} style={{ justifySelf: "start" }}>
               {busy === "funds" ? <Spinner /> : null} {ausdFaucet ? "Add $10,000 test AUSD" : "Add demo funds"}
             </button>
           )}
