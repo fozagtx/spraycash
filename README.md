@@ -182,14 +182,16 @@ NODE_PATH=$(npm root -g) node e2e/flow.cjs               # screenshots in web/e2
 
 ## Deployed addresses
 
-_Fill in after `npm run deploy:monad` (from `contracts/deployments/monadTestnet.json`)._
+Monad testnet (chain 10143), from `contracts/deployments/monadTestnet.json`:
 
 | Contract | Address |
 |---|---|
-| SpraycashPayroll | |
-| FxRateReceiver | |
-| SpraycashUSD | |
-| SpraycashForwarder | |
+| SpraycashPayroll | [0x60a281101208e007dbdb0b90dae3f90ef214b962](https://testnet.monadexplorer.com/address/0x60a281101208e007dbdb0b90dae3f90ef214b962) |
+| FxRateReceiver | [0x1331ded23217632b318b828040318ec510857a93](https://testnet.monadexplorer.com/address/0x1331ded23217632b318b828040318ec510857a93) |
+| SpraycashForwarder | [0x29bde2292814d1e7df7ceb4af39f3d8cd3f8bae9](https://testnet.monadexplorer.com/address/0x29bde2292814d1e7df7ceb4af39f3d8cd3f8bae9) |
+| AUSD (Agora, existing) | [0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC](https://testnet.monadexplorer.com/address/0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC) |
+
+The web app uses these by default (`web/src/lib/config.ts`); env vars override them for a local chain.
 
 CRE simulate logs with transaction hashes: `cre/logs/simulate.log`.
 

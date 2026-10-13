@@ -4,7 +4,7 @@ Indexes payslips, withdrawals, refunds and every Chainlink CRE rate update on Mo
 for payroll history and receipts.
 
 ```bash
-# 1. Put the deployed addresses + startBlock from contracts/deployments/monadTestnet.json into config.yaml
+# 1. config.yaml already has the Monad testnet addresses + startBlock from contracts/deployments/monadTestnet.json
 pnpm install
 pnpm codegen
 pnpm dev        # local Postgres + GraphQL at http://localhost:8080

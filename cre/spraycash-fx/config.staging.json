@@ -4,12 +4,12 @@
   "singleSourceAllowed": ["NGN"],
   "maxDeviationBps": 100,
   "sources": {
-    "frankfurter": "https://api.frankfurter.app/latest?from=USD&to=INR,MXN,PHP",
+    "frankfurter": "https://api.frankfurter.dev/v1/latest?from=USD&to=INR,MXN,PHP",
     "erApi": "https://open.er-api.com/v6/latest/USD"
   },
   "evm": {
     "chainSelectorName": "monad-testnet",
-    "receiverAddress": "0x0000000000000000000000000000000000000000",
+    "receiverAddress": "0x1331ded23217632b318b828040318ec510857a93",
     "gasLimit": "500000"
   }
 }

@@ -4,8 +4,9 @@ Status of every requirement in the PRD (Monad Metropolis, Track 2), what was ver
 Branch: `claude/zealous-hypatia-u61dvz`.
 
 **Short version:** all P0 features are built and pass an end-to-end run on a local chain.
-**Nothing is deployed to Monad testnet yet.** The build sandbox could only reach package registries, not
-Monad RPC, the FX APIs or Vercel. Deploying needs your keys: see [What's left](#whats-left-in-order).
+**Deployed to Monad testnet** (addresses in `contracts/deployments/monadTestnet.json` and the README). The full
+employer and freelancer flow passes against it. `FxRateReceiver` still has the deployer as its forwarder, so rates are
+pushed with `npm run push-rate:monad` until it is pointed at the CRE forwarder with `setForwarder`.
 
 ---
 

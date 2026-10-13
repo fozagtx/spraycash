@@ -1,0 +1,10 @@
+{
+  "chainId": 10143,
+  "startBlock": 70757765,
+  "creForwarder": "0xad42cb0CfBD8c737757e966E718800a08A64aC26",
+  "forwarder": "0x29bde2292814d1e7df7ceb4af39f3d8cd3f8bae9",
+  "usd": "0xa9012a055bd4e0eDfF8Ce09f960291C09D5322dC",
+  "ausdFaucet": "0xd236c18D274E54FAccC3dd9DDA4b27965a73ee6C",
+  "fx": "0x1331ded23217632b318b828040318ec510857a93",
+  "payroll": "0x60a281101208e007dbdb0b90dae3f90ef214b962"
+}

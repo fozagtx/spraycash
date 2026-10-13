@@ -1,15 +1,15 @@
 # Envio HyperIndex config for Spraycash on Monad testnet.
-# Fill the addresses and start_block from contracts/deployments/monadTestnet.json.
+# Addresses and start_block from contracts/deployments/monadTestnet.json.
 name: spraycash-indexer
 field_selection:
   transaction_fields:
     - hash
 chains:
   - id: 10143
-    start_block: 0
+    start_block: 70757765
     contracts:
       - name: SpraycashPayroll
-        address: "0x0000000000000000000000000000000000000000"
+        address: "0x60a281101208e007dbdb0b90dae3f90ef214b962"
         abi_file_path: abis/SpraycashPayroll.json
         events:
           - event: PayslipCreated(uint256 indexed id, address indexed employer, bytes32 indexed currency, uint256 lockedRate, uint128 deposit, uint64 start, uint64 end, uint64 claimDeadline, address claimSigner)
@@ -18,7 +18,7 @@ chains:
           - event: PayslipStopped(uint256 indexed id, uint128 earned, uint128 refunded)
           - event: UnclaimedRefunded(uint256 indexed id, uint128 refunded)
       - name: FxRateReceiver
-        address: "0x0000000000000000000000000000000000000000"
+        address: "0x1331ded23217632b318b828040318ec510857a93"
         abi_file_path: abis/FxRateReceiver.json
         events:
           - event: RateUpdated(bytes32 indexed currency, uint256 value, uint8 sources, uint64 observedAt)
