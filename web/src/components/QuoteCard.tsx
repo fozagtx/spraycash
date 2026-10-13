@@ -6,6 +6,7 @@ import { explorerTx } from "@/lib/config";
 import type { CurrencyCode } from "@/lib/currencies";
 import { ago, formatRate, rateToNumber } from "@/lib/format";
 import { Spinner, useNow } from "./ui";
+import { Skeleton } from "./Motion";
 
 const LOCK_SECONDS = 5;
 const POLL_MS = 4000;
@@ -105,8 +106,13 @@ export function QuoteCard({
 
   if (!quote) {
     return (
-      <div className="card" style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <Spinner /> <span className="muted">Getting today&apos;s rate…</span>
+      <div className="card quote" aria-label="Getting today's rate">
+        <div style={{ display: "grid", gap: 10, flex: 1 }}>
+          <Skeleton w={96} h={10} />
+          <Skeleton w="62%" h={30} />
+          <Skeleton w="48%" h={22} r={999} />
+        </div>
+        <Skeleton w={56} h={56} r={28} />
       </div>
     );
   }
@@ -132,12 +138,15 @@ export function QuoteCard({
           </div>
           <div className="quote-meta">
             {stale ? (
-              <span className="chip chip-warning">
+              <span className="chip chip-warning fade-in">
                 <Spinner /> Rate refreshing…
               </span>
             ) : (
-              <span className="chip chip-verified">
-                ✓ Verified by Chainlink{quote.sources < 2 ? " · single source" : ""}
+              <span className="chip chip-verified fade-in">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M5 12.5 10 17.5 19 7.5" />
+                </svg>
+                Verified by Chainlink{quote.sources < 2 ? " · single source" : ""}
               </span>
             )}
             <span className="small muted">updated {ago(age)}</span>
@@ -178,10 +187,19 @@ function LockRing({ remaining, active }: { remaining: number; active: boolean })
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c * (1 - frac)}
-          style={{ transition: "stroke-dashoffset 0.25s linear" }}
+          style={{ transition: "stroke-dashoffset var(--duration-fast) linear" }}
         />
       </svg>
-      <span className="lock-label">{active ? `${Math.ceil(remaining)}s` : "🔒"}</span>
+      <span className="lock-label">
+        {active ? (
+          `${Math.ceil(remaining)}s`
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+            <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
+            <path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" />
+          </svg>
+        )}
+      </span>
     </div>
   );
 }

@@ -15,6 +15,9 @@ import { clientName, receiptsFor, rememberReceipt } from "@/lib/store";
 import { usePasskeyAccount } from "@/lib/useAccount";
 import { HeroAmount } from "@/components/HeroAmount";
 import { Flag, LiveDot, NotConfigured, Spinner, useFrameNow } from "@/components/ui";
+import { sfx } from "@/lib/sound";
+import { Floater } from "@/components/Landing";
+import { Morph } from "@/components/Motion";
 
 export default function PayslipPage() {
   const { id: idParam } = useParams<{ id: string }>();
@@ -103,6 +106,7 @@ export default function PayslipPage() {
         );
       });
       rememberReceipt(p.id, hash);
+      sfx("receive");
       router.push(`/receipt/${hash}`);
     } catch (e) {
       setError(passkeyErrorMessage(e));
@@ -111,7 +115,9 @@ export default function PayslipPage() {
   }
 
   return (
-    <div className="narrow page stack-lg">
+    <div className="narrow page stack-lg reveal">
+      <div className="paper-slip">
+      <Floater src="/landing/clip.webp" width={96} depth={4} className="f-slip-clip" />
       <div className="card card-hero stack-lg">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
           <span className="person">
@@ -144,13 +150,8 @@ export default function PayslipPage() {
         {error && <div className="notice notice-danger">{error}</div>}
 
         <button className="btn btn-accent btn-block" onClick={withdraw} disabled={busy || availableUsd <= 0 || unclaimed}>
-          {busy ? (
-            <>
-              <Spinner /> Withdrawing…
-            </>
-          ) : (
-            `Withdraw ${formatLocal(availableUsd * rate, currency.code)}`
-          )}
+          {busy ? <Spinner /> : null}
+          <Morph>{busy ? "Withdrawing…" : `Withdraw ${formatLocal(availableUsd * rate, currency.code)}`}</Morph>
         </button>
         {!isMine && !unclaimed && acct.ready && (
           <p className="small muted" style={{ margin: 0 }}>
@@ -162,6 +163,7 @@ export default function PayslipPage() {
             This payslip hasn&apos;t been connected to an account yet. Open the pay link you were sent.
           </p>
         )}
+      </div>
       </div>
 
       <div className="card stack" style={{ gap: 0 }}>

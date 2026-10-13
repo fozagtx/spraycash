@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { Accordion } from "@/components/Motion";
 import { LandingDemo } from "@/components/LandingDemo";
 import { LogoMark } from "@/components/Logo";
+import { FeatureCards, FloatStage, Floater, Marquee, Scribble, StampIn, WorldRoutes } from "@/components/Landing";
 
 const CORRIDORS = [
   { flag: "linear-gradient(#FF9933 0 33%, #FFFFFF 33% 66%, #138808 66%)", country: "India", amount: "₹1,25,000", code: "INR" },
@@ -43,20 +45,28 @@ export default function Home() {
   return (
     <>
       {/* ---------------------------------------------------------------- hero */}
-      <section className="section hero">
-        <div className="container hero-grid">
-          <div className="stack-lg">
-            <span className="chip chip-verified">
+      <section className="hero-v2">
+        <FloatStage>
+          <Floater src="/landing/coin-usd.webp" width={92} depth={18} className="f-usd" />
+          <Floater src="/landing/coin-inr.webp" width={104} depth={-22} className="f-inr" />
+          <Floater src="/landing/coin-php.webp" width={78} depth={14} className="f-php" />
+          <Floater src="/landing/note.webp" width={150} depth={-12} className="f-note" />
+          <div className="container hero-center stack-lg">
+            <span className="chip chip-verified" style={{ justifySelf: "center" }}>
               <span className="live-dot" aria-hidden /> Payroll across borders, paid every second
             </span>
-            <h1 className="display">
-              Pay your team anywhere. <em className="accent-italic">They get paid every second.</em>
+            <h1 className="display hero-title">
+              Pay your team <Scribble>anywhere.</Scribble>
+              <br />
+              <em className="accent-italic">
+                They get paid <Scribble delay={350}>every second.</Scribble>
+              </em>
             </h1>
-            <p className="lede">
+            <p className="lede" style={{ margin: "0 auto" }}>
               Fund payroll in AUSD, the digital dollar by Agora. Your freelancers watch their earnings grow in their own currency, at a rate locked
               the moment you hit pay.
             </p>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <div className="hero-ctas">
               <Link href="/employer" className="btn btn-accent btn-lg">
                 Start paying
               </Link>
@@ -64,21 +74,37 @@ export default function Home() {
                 I&apos;m getting paid
               </Link>
             </div>
-            <ul className="ticks">
-              <li>Sign in with Face ID</li>
-              <li>No fees to withdraw</li>
-              <li>Stop any time</li>
-              <li>Settled in AUSD by Agora</li>
-            </ul>
           </div>
-          <LandingDemo />
-        </div>
+          <div className="container papers">
+            <div className="paper paper-from">
+              <span className="eyebrow">From</span>
+              <span className="paper-logo" aria-hidden>
+                A
+              </span>
+              <strong className="paper-name">Acme Studio</strong>
+              <span className="small muted">billing@acme.studio</span>
+              <span className="small muted">New York, USA</span>
+              <hr className="divider" />
+              <div className="kv">
+                <span>Funded</span>
+                <span>$1,498.50</span>
+              </div>
+              <div className="kv">
+                <span>Rate locked</span>
+                <span>83.42 INR</span>
+              </div>
+            </div>
+            <div className="paper-to">
+              <Floater src="/landing/clip.webp" width={110} depth={4} className="f-clip" />
+              <LandingDemo />
+            </div>
+          </div>
+        </FloatStage>
       </section>
 
       {/* ---------------------------------------------------------- corridors */}
       <section className="band">
-        <div className="container corridors">
-          <span className="small muted corridors-label">You pay in AUSD dollars. They see:</span>
+        <Marquee>
           {CORRIDORS.map((c) => (
             <span key={c.code} className="corridor">
               <span className="flag flag-lg" style={{ background: c.flag }} aria-hidden />
@@ -88,6 +114,30 @@ export default function Home() {
               </span>
             </span>
           ))}
+        </Marquee>
+      </section>
+
+      {/* ------------------------------------------------------------- routes */}
+      <section className="section">
+        <div className="container stack-lg">
+          <div className="section-head center">
+            <span className="eyebrow">You pay in AUSD dollars. They see:</span>
+            <h2 className="display">
+              Rupees, pesos and naira, <Scribble>arriving every second.</Scribble>
+            </h2>
+          </div>
+          <WorldRoutes />
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------------- features */}
+      <section className="section" style={{ borderTop: "1px solid var(--line)" }}>
+        <div className="container stack-lg">
+          <div className="section-head center">
+            <span className="eyebrow">What your freelancers get</span>
+            <h2 className="display">Pay that feels like it already arrived.</h2>
+          </div>
+          <FeatureCards />
         </div>
       </section>
 
@@ -204,6 +254,8 @@ export default function Home() {
               figure on a receipt to see the record behind it, including the exact Chainlink rate that was locked.
             </p>
           </div>
+          <StampIn>
+          <Floater src="/landing/stamp.webp" width={190} depth={-8} className="f-stamp" />
           <div className="mini-receipt" aria-hidden>
             <div className="eyebrow" style={{ textAlign: "center" }}>
               Payslip receipt
@@ -226,6 +278,7 @@ export default function Home() {
               </div>
             ))}
           </div>
+          </StampIn>
         </div>
       </section>
 
@@ -236,20 +289,15 @@ export default function Home() {
             <span className="eyebrow">Questions</span>
             <h2 className="display">Good to know</h2>
           </div>
-          <div className="faq">
-            {FAQ.map(([q, a]) => (
-              <details key={q}>
-                <summary>{q}</summary>
-                <p className="muted">{a}</p>
-              </details>
-            ))}
-          </div>
+          <Accordion items={FAQ as [string, string][]} />
         </div>
       </section>
 
       {/* ---------------------------------------------------------------- cta */}
       <section className="container" style={{ paddingBottom: "var(--s5)" }}>
-        <div className="cta">
+        <FloatStage className="cta cta-grid">
+          <Floater src="/landing/coin-inr.webp" width={86} depth={-16} className="f-cta-coin" />
+          <Floater src="/landing/note.webp" width={130} depth={10} className="f-cta-note" />
           <div className="stack">
             <h2 className="display">Payroll that crosses borders as fast as the work does.</h2>
             <p style={{ margin: 0, opacity: 0.85 }}>Set up in a minute. Your first payslip can start streaming today.</p>
@@ -257,7 +305,7 @@ export default function Home() {
           <Link href="/employer" className="btn btn-lg btn-light">
             Start paying
           </Link>
-        </div>
+        </FloatStage>
       </section>
     </>
   );

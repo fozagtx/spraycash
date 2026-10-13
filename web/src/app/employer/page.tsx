@@ -1,5 +1,6 @@
 "use client";
 
+import { Floater } from "@/components/Landing";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { encodeFunctionData } from "viem";
@@ -21,6 +22,7 @@ import { getBusinessName, getPayslipMeta, setBusinessName } from "@/lib/store";
 import { usePasskeyAccount } from "@/lib/useAccount";
 import { SignInCard } from "@/components/SignInCard";
 import { Avatar, CurrencyChip, LiveDot, NotConfigured, Spinner, useNow } from "@/components/ui";
+import { ConfirmButton, CopyButton, Odometer, Skeleton, useToast } from "@/components/Motion";
 
 const EMPLOYER = { kind: "employer" } as const;
 
@@ -68,7 +70,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
   const [balance, setBalance] = useState<bigint>();
   const [payslips, setPayslips] = useState<Payslip[]>();
   const [busy, setBusy] = useState<string>();
-  const [message, setMessage] = useState<{ kind: "ok" | "danger"; text: string }>();
+  const toast = useToast();
 
   const load = useCallback(async () => {
     const [bal, ids] = await Promise.all([readUsdBalance(address), readEmployerPayslipIds(address)]);
@@ -78,20 +80,19 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
   }, [address]);
 
   useEffect(() => {
-    load().catch(() => setMessage({ kind: "danger", text: "Couldn't load payroll. Retrying…" }));
+    load().catch(() => toast("danger", "Couldn't load payroll. Retrying…"));
     const t = setInterval(() => load().catch(() => {}), 8000);
     return () => clearInterval(t);
-  }, [load]);
+  }, [load, toast]);
 
   async function act(key: string, fn: () => Promise<string | void>) {
     setBusy(key);
-    setMessage(undefined);
     try {
       const text = await fn();
-      if (text) setMessage({ kind: "ok", text });
+      if (text) toast("ok", text);
       await load();
     } catch (e) {
-      setMessage({ kind: "danger", text: e instanceof Error ? e.message : "That didn't go through." });
+      toast("danger", e instanceof Error ? e.message : "That didn't go through.");
     } finally {
       setBusy(undefined);
     }
@@ -145,8 +146,8 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
   const perDay = streaming.reduce((sum, p) => sum + usdToNumber(p.deposit) / ((Number(p.end) - Number(p.start)) / 86400), 0);
 
   return (
-    <div className="container page stack-lg">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", flexWrap: "wrap", gap: 16 }}>
+    <div className="container page stack-lg reveal">
+      <div className="page-head">
         <div className="stack" style={{ gap: 4 }}>
           <div className="eyebrow">{business || "Your business"}</div>
           <h1 className="display" style={{ fontSize: 44 }}>
@@ -158,11 +159,12 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
         </Link>
       </div>
 
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
-        <div className="card" style={{ display: "grid", gap: 6, alignContent: "start" }}>
+      <div className="stats">
+        <div className="card card-coin">
+          <Floater src="/landing/coin-usd.webp" width={64} depth={6} className="f-card-coin" />
           <span className="small muted">Payroll balance · AUSD by Agora</span>
-          <span className="money" style={{ fontSize: 40 }}>
-            {balance === undefined ? "…" : formatUsd(usdToNumber(balance))}
+          <span className="money stat-value">
+            {balance === undefined ? <Skeleton w={180} h={40} /> : <Odometer text={formatUsd(usdToNumber(balance))} />}
           </span>
           {lowBalance && (
             <button className="btn btn-ghost btn-sm" onClick={addFunds} disabled={busy === "funds"} style={{ justifySelf: "start" }}>
@@ -170,10 +172,10 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
             </button>
           )}
         </div>
-        <div className="card" style={{ display: "grid", gap: 6, alignContent: "start" }}>
+        <div className="card">
           <span className="small muted">Paying out now</span>
-          <span className="money" style={{ fontSize: 40 }}>
-            {formatUsd(perDay)}
+          <span className="money stat-value">
+            <Odometer text={formatUsd(perDay)} />
             <span className="small muted" style={{ fontFamily: "var(--font-ui)" }}>
               {" "}
               / day
@@ -183,23 +185,34 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
         </div>
       </div>
 
-      {message && <div className={`notice notice-${message.kind}`}>{message.text}</div>}
-
       <div className="card" style={{ padding: 0 }}>
         {!payslips ? (
-          <div style={{ padding: 24, display: "flex", gap: 10 }}>
-            <Spinner /> <span className="muted">Loading payslips…</span>
+          <div style={{ padding: 24, display: "grid", gap: 18 }} aria-label="Loading payslips">
+            {[0, 1, 2].map((i) => (
+              <div key={i} style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <Skeleton w={32} h={32} r={16} />
+                <div style={{ display: "grid", gap: 6, flex: 1 }}>
+                  <Skeleton w="40%" h={12} />
+                  <Skeleton w="22%" h={10} />
+                </div>
+                <Skeleton w={72} h={22} r={999} />
+              </div>
+            ))}
           </div>
         ) : payslips.length === 0 ? (
-          <div style={{ padding: 40, textAlign: "center" }} className="stack">
+          <div className="empty fade-in">
+            <span className="empty-mark">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                <circle cx="12" cy="8" r="3.5" />
+                <path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5" />
+              </svg>
+            </span>
             <p className="muted" style={{ margin: 0 }}>
               No one on payroll yet.
             </p>
-            <div>
-              <Link href="/employer/new" className="btn btn-ghost btn-sm">
-                Pay your first freelancer
-              </Link>
-            </div>
+            <Link href="/employer/new" className="btn btn-ghost btn-sm">
+              Pay your first freelancer
+            </Link>
           </div>
         ) : (
           <div style={{ overflowX: "auto", padding: "0 16px" }}>
@@ -263,7 +276,6 @@ function PayslipRow({
   const earned = p.voided ? 0 : earnedAt(p, now);
   const days = (Number(p.end) - Number(p.start)) / 86400;
   const perDayUsd = usdToNumber(p.deposit) / days;
-  const [copied, setCopied] = useState(false);
   const canStop = !p.voided && p.stoppedAt === 0n && now < Number(p.end) && status !== "expired";
 
   return (
@@ -293,16 +305,7 @@ function PayslipRow({
       </td>
       <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
         {status === "unclaimed" && meta?.link && (
-          <button
-            className="btn btn-ghost btn-sm"
-            onClick={() => {
-              navigator.clipboard.writeText(meta.link);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1500);
-            }}
-          >
-            {copied ? "Copied" : "Copy link"}
-          </button>
+          <CopyButton text={meta.link} className="btn btn-ghost btn-sm" />
         )}{" "}
         {status === "expired" && (
           <button className="btn btn-ghost btn-sm" onClick={onRefund} disabled={busy === `refund-${p.id}`}>
@@ -310,9 +313,14 @@ function PayslipRow({
           </button>
         )}
         {canStop && (
-          <button className="btn btn-danger btn-sm" onClick={onStop} disabled={busy === `stop-${p.id}`}>
-            {busy === `stop-${p.id}` ? <Spinner /> : null} Stop
-          </button>
+          <ConfirmButton
+            label="Stop"
+            question="Stop paying?"
+            confirmLabel="Stop pay"
+            busy={busy === `stop-${p.id}`}
+            busyNode={<Spinner />}
+            onConfirm={onStop}
+          />
         )}
       </td>
     </tr>

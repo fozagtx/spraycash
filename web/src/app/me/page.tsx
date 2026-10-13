@@ -9,7 +9,8 @@ import { currencyFromKey } from "@/lib/currencies";
 import { formatLocal, rateToNumber, shortHash, usdToNumber } from "@/lib/format";
 import { knownClientAccounts } from "@/lib/passkey";
 import { clientName } from "@/lib/store";
-import { Flag, LiveDot, NotConfigured, Spinner, useNow } from "@/components/ui";
+import { Flag, LiveDot, NotConfigured, useNow } from "@/components/ui";
+import { Skeleton } from "@/components/Motion";
 
 type ClientAccount = { employer: Address; account: Address; payslips: Payslip[] };
 
@@ -38,7 +39,7 @@ export default function MyPayPage() {
   }
 
   return (
-    <div className="narrow page stack-lg">
+    <div className="narrow page stack-lg reveal">
       <div className="stack" style={{ gap: 6 }}>
         <h1 className="display" style={{ fontSize: 44 }}>
           My pay
@@ -49,8 +50,10 @@ export default function MyPayPage() {
       </div>
 
       {!clients ? (
-        <div style={{ display: "flex", gap: 10 }}>
-          <Spinner /> <span className="muted">Loading…</span>
+        <div className="card" style={{ display: "grid", gap: 14 }} aria-label="Loading">
+          <Skeleton w="35%" h={14} />
+          <Skeleton w="22%" h={10} />
+          <Skeleton w="100%" h={36} />
         </div>
       ) : clients.length === 0 ? (
         <div className="card stack">
@@ -83,7 +86,7 @@ export default function MyPayPage() {
                 <Link
                   key={p.id.toString()}
                   href={`/payslip/${p.id}`}
-                  className="kv"
+                  className="kv pay-row"
                   style={{ textDecoration: "none", alignItems: "center", borderTop: "1px solid var(--line)", paddingTop: 14 }}
                 >
                   <span style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
@@ -91,7 +94,10 @@ export default function MyPayPage() {
                     {status === "streaming" ? <LiveDot label="Live" /> : <LiveDot off label={status} />}
                   </span>
                   <span className="money" style={{ fontSize: 28, color: "var(--ink)" }}>
-                    {formatLocal(available * rate, currency.code)} →
+                    {formatLocal(available * rate, currency.code)}
+                    <svg className="pay-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
                   </span>
                 </Link>
               );

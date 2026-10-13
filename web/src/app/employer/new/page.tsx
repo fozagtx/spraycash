@@ -15,6 +15,8 @@ import { getBusinessName, savePayslipMeta } from "@/lib/store";
 import { usePasskeyAccount } from "@/lib/useAccount";
 import { QuoteCard, type LockedQuote } from "@/components/QuoteCard";
 import { Flag, NotConfigured, Spinner } from "@/components/ui";
+import { CopyButton, Morph, SegmentedControl, Skeleton, SuccessCheck } from "@/components/Motion";
+import { sfx } from "@/lib/sound";
 
 const EMPLOYER = { kind: "employer" } as const;
 const DAY = 86400;
@@ -49,7 +51,6 @@ export default function NewPayslipPage() {
   const [step, setStep] = useState<string>();
   const [error, setError] = useState<string>();
   const [done, setDone] = useState<{ id: bigint; link: string }>();
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => setBusiness(getBusinessName()), []);
   useEffect(() => {
@@ -120,6 +121,7 @@ export default function NewPayslipPage() {
           link,
         });
         setDone({ id, link });
+        sfx("complete");
       }, business);
     } catch (e) {
       setError(e instanceof Error ? e.message : "That didn't go through.");
@@ -149,9 +151,10 @@ export default function NewPayslipPage() {
 
   if (done) {
     return (
-      <div className="narrow page stack-lg">
+      <div className="narrow page stack-lg reveal">
         <div className="stack">
-          <span className="chip chip-verified">✓ Payslip funded</span>
+          <SuccessCheck />
+          <span className="chip chip-verified" style={{ justifySelf: "start", width: "fit-content" }}>Payslip funded</span>
           <h1 className="display" style={{ fontSize: 48 }}>
             Send {name.split(" ")[0]} their pay link
           </h1>
@@ -162,15 +165,7 @@ export default function NewPayslipPage() {
         </div>
         <div className="link-box">
           <code>{done.link}</code>
-          <button
-            className="btn btn-accent btn-sm"
-            onClick={() => {
-              navigator.clipboard.writeText(done.link);
-              setCopied(true);
-            }}
-          >
-            {copied ? "Copied" : "Copy link"}
-          </button>
+          <CopyButton text={done.link} />
         </div>
         <div style={{ display: "flex", gap: 12 }}>
           <Link href="/employer" className="btn btn-ghost">
@@ -184,10 +179,13 @@ export default function NewPayslipPage() {
   const c = CURRENCIES[currency];
 
   return (
-    <div className="narrow page stack-lg">
+    <div className="narrow page stack-lg reveal">
       <div className="stack" style={{ gap: 4 }}>
-        <Link href="/employer" className="small muted" style={{ textDecoration: "none" }}>
-          ← Payroll
+        <Link href="/employer" className="small muted back">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Payroll
         </Link>
         <h1 className="display" style={{ fontSize: 44 }}>
           Pay a freelancer
@@ -202,21 +200,21 @@ export default function NewPayslipPage() {
 
         <div className="field">
           <label>Where they live</label>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <div className="tiles">
             {CURRENCY_LIST.map((cur) => (
               <button
                 key={cur.code}
                 type="button"
-                className="chip"
-                onClick={() => setCurrency(cur.code)}
-                aria-pressed={currency === cur.code}
-                style={{
-                  height: 36,
-                  cursor: "pointer",
-                  borderColor: currency === cur.code ? "var(--ink)" : "var(--line)",
+                className="tile"
+                onClick={() => {
+                  if (cur.code !== currency) sfx("select");
+                  setCurrency(cur.code);
                 }}
+                aria-pressed={currency === cur.code}
               >
-                <Flag code={cur.code} /> {cur.country} · {cur.code}
+                <Flag code={cur.code} />
+                <span className="tile-name">{cur.country}</span>
+                <span className="tile-code">{cur.code}</span>
               </button>
             ))}
           </div>
@@ -225,25 +223,29 @@ export default function NewPayslipPage() {
         <div className="field">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <label htmlFor="amount">Monthly pay</label>
-            <div className="segmented" role="group" aria-label="Enter amount in">
-              <button type="button" aria-pressed={!inUsd} onClick={() => setInUsd(false)}>
-                {c.code}
-              </button>
-              <button type="button" aria-pressed={inUsd} onClick={() => setInUsd(true)}>
-                USD
-              </button>
-            </div>
+            <SegmentedControl
+              label="Enter amount in"
+              value={inUsd ? "USD" : c.code}
+              onChange={(v) => setInUsd(v === "USD")}
+              options={[
+                { value: c.code, label: c.code },
+                { value: "USD", label: "USD" },
+              ]}
+            />
           </div>
-          <input
-            id="amount"
-            className="input input-money"
-            inputMode="decimal"
-            placeholder={inUsd ? "$1,500" : `${c.symbol}1,25,000`}
-            value={amountText}
-            onChange={(e) => setAmountText(e.target.value)}
-          />
+          <div className="money-input">
+            <span className="prefix">{inUsd ? "$" : c.symbol}</span>
+            <input
+              id="amount"
+              className="input input-money"
+              inputMode="decimal"
+              placeholder={inUsd ? "1,500" : "1,25,000"}
+              value={amountText}
+              onChange={(e) => setAmountText(e.target.value)}
+            />
+          </div>
           {amount > 0 && rate > 0 && (
-            <span className="small muted">
+            <span className="small muted fade-in">
               {inUsd ? `≈ ${formatLocal(monthlyLocal, currency, 0)} a month` : `≈ ${formatUsd(monthlyUsd)} a month`}
             </span>
           )}
@@ -297,15 +299,15 @@ export default function NewPayslipPage() {
       <div className="card stack">
         <div className="kv">
           <span>You fund now</span>
-          <strong>{fundUsd > 0 ? formatUsd(fundUsd) : "—"}</strong>
+          <strong>{formatUsd(Math.max(0, fundUsd))}</strong>
         </div>
         <div className="kv">
           <span>{name.split(" ")[0] || "They"} earn per day</span>
-          <span>{monthlyLocal > 0 ? formatLocal(monthlyLocal / 30, currency) : "—"}</span>
+          <span>{formatLocal(Math.max(0, monthlyLocal) / 30, currency)}</span>
         </div>
         <div className="kv">
           <span>Payroll balance (AUSD)</span>
-          <span>{balance === undefined ? "…" : formatUsd(usdToNumber(balance))}</span>
+          <span>{balance === undefined ? <Skeleton w={90} h={14} /> : formatUsd(usdToNumber(balance))}</span>
         </div>
         {overBudget && (
           <div className="notice notice-danger">
@@ -314,17 +316,16 @@ export default function NewPayslipPage() {
         )}
         {error && <div className="notice notice-danger">{error}</div>}
         <button className="btn btn-accent btn-block" disabled={!lock || !!step || overBudget || stale} onClick={confirm}>
-          {step ? (
-            <>
-              <Spinner /> {step}
-            </>
-          ) : stale ? (
-            "Rate refreshing…"
-          ) : lock ? (
-            `Pay ${fundUsd > 0 ? formatUsd(fundUsd) : ""} at ${rateToNumber(lock.rate).toFixed(2)}`
-          ) : (
-            "Pay"
-          )}
+          {step ? <Spinner /> : null}
+          <Morph>
+            {step
+              ? step
+              : stale
+                ? "Rate refreshing…"
+                : lock
+                  ? `Pay ${fundUsd > 0 ? formatUsd(fundUsd) : ""} at ${rateToNumber(lock.rate).toFixed(2)}`
+                  : "Pay"}
+          </Morph>
         </button>
         <p className="small muted" style={{ margin: 0 }}>
           Pay streams every second from the start date. Stop any time: earned pay stays with them, the rest comes back

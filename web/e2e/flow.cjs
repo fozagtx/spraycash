@@ -81,6 +81,7 @@ async function rpc(method, params = []) {
   await ep.waitForTimeout(1500);
   await ep.screenshot({ path: `${OUT}/08-dashboard.png`, fullPage: true });
   await ep.click("button:has-text('Stop')");
+  await ep.click("button:has-text('Stop pay')");
   await ep.waitForSelector("text=Pay stopped", { timeout: 30000 });
   await ep.screenshot({ path: `${OUT}/09-stopped.png`, fullPage: true });
   log("stopped");

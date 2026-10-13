@@ -15,6 +15,8 @@ import { sendGasless } from "@/lib/relay";
 import { rememberClientName } from "@/lib/store";
 import { usePasskeyAccount } from "@/lib/useAccount";
 import { Flag, LiveDot, NotConfigured, Spinner } from "@/components/ui";
+import { Morph } from "@/components/Motion";
+import { sfx } from "@/lib/sound";
 
 type LinkParams = { key?: Hex; from: string; to: string; monthly: number };
 
@@ -134,16 +136,18 @@ export default function ClaimPage() {
           encodeFunctionData({ abi: spraycashPayrollAbi, functionName: "claim", args: [p.id, signature] }),
         );
         rememberClientName(getAddress(p.employer), link!.from);
+        sfx("connect");
         router.push(`/payslip/${p.id}`);
       }, link!.to || "Spraycash account");
     } catch (e) {
       setError(passkeyErrorMessage(e));
+      sfx("error");
       setStep(undefined);
     }
   }
 
   return (
-    <div className="narrow page stack-lg">
+    <div className="narrow page stack-lg reveal">
       <div className="card card-hero stack-lg">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span className="person">
@@ -173,13 +177,8 @@ export default function ClaimPage() {
           </div>
         </div>
         <button className="btn btn-accent btn-block" onClick={claim} disabled={!!step || acct.busy}>
-          {step ? (
-            <>
-              <Spinner /> {step}
-            </>
-          ) : (
-            "Continue with passkey"
-          )}
+          {step ? <Spinner /> : null}
+          <Morph>{step ?? "Continue with passkey"}</Morph>
         </button>
         {error && <div className="notice notice-danger">{error}</div>}
         <p className="small muted" style={{ margin: 0 }}>

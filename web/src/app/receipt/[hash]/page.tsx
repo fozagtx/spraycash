@@ -10,6 +10,7 @@ import { addresses, explorerAddress, explorerTx } from "@/lib/config";
 import { currencyFromKey, type Currency } from "@/lib/currencies";
 import { formatDate, formatLocal, formatUsd, rateToNumber, shortHash, usdToNumber } from "@/lib/format";
 import { clientName } from "@/lib/store";
+import { Floater, StampIn } from "@/components/Landing";
 import { Flag, Spinner } from "@/components/ui";
 
 type Receipt = {
@@ -80,7 +81,9 @@ export default function ReceiptPage() {
   const from = clientName(getAddress(r.payslip.employer)) || "Your client";
 
   return (
-    <div className="narrow page stack-lg">
+    <div className="narrow page stack-lg reveal">
+      <StampIn>
+      <Floater src="/landing/stamp.webp" width={170} depth={-6} className="f-stamp f-receipt-stamp" />
       <div className="receipt">
         <div className="stack" style={{ textAlign: "center", gap: 6 }}>
           <span className="eyebrow">Payslip receipt</span>
@@ -165,7 +168,9 @@ export default function ReceiptPage() {
           </div>
         </div>
       </div>
-      <div style={{ display: "flex", gap: 12, justifyContent: "center", paddingTop: 12 }}>
+      </StampIn>
+
+      <div className="receipt-actions">
         <Link className="btn btn-ghost" href={`/payslip/${r.payslip.id}`}>
           Back to my pay
         </Link>

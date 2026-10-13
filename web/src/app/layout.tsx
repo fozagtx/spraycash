@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { NavLinks, SoundToggle, ToastProvider } from "@/components/Motion";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,15 +24,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <ToastProvider>
         <header className="header">
           <div className="container header-inner">
             <Link href="/" className="brand" aria-label="Spraycash home">
               <Logo />
             </Link>
-            <nav className="nav">
-              <Link href="/employer">Run payroll</Link>
-              <Link href="/me">My pay</Link>
-            </nav>
+            <div className="header-actions">
+              <NavLinks
+                links={[
+                  { href: "/employer", label: "Run payroll" },
+                  { href: "/me", label: "My pay" },
+                ]}
+              />
+              <SoundToggle />
+            </div>
           </div>
         </header>
         <main>{children}</main>
@@ -42,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span>Monad testnet · settled in AUSD by Agora · rates verified by Chainlink</span>
           </div>
         </footer>
+        </ToastProvider>
       </body>
     </html>
   );
