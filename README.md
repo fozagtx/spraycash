@@ -16,6 +16,7 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
 |---|---|
 | Live URL | _TODO after Vercel deploy_ |
 | Demo video | _TODO_ |
+| Handoff / status | [docs/HANDOFF.md](docs/HANDOFF.md) |
 | Contracts (Monad testnet) | see [Deployed addresses](#deployed-addresses) |
 
 ---
