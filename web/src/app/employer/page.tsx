@@ -213,7 +213,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
             </Link>
           </div>
         ) : (
-          <div style={{ overflowX: "auto", padding: "0 16px" }}>
+          <div className="table-wrap">
             <table className="table">
               <thead>
                 <tr>
