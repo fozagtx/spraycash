@@ -5,7 +5,7 @@ import { findRateTx, readMaxRateAge, readQuote, type Quote } from "@/lib/chain";
 import { explorerTx } from "@/lib/config";
 import type { CurrencyCode } from "@/lib/currencies";
 import { ago, formatRate, rateToNumber } from "@/lib/format";
-import { Spinner, useNow } from "./ui";
+import { ChainlinkLogo, Spinner, useNow } from "./ui";
 import { Skeleton } from "./Motion";
 
 const LOCK_SECONDS = 5;
@@ -150,7 +150,8 @@ export function QuoteCard({
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="M5 12.5 10 17.5 19 7.5" />
                 </svg>
-                Verified by Chainlink{quote.sources < 2 ? " · single source" : ""}
+                Verified by <ChainlinkLogo />
+                {quote.sources < 2 ? " · single source" : ""}
               </span>
             )}
             <span className="small muted">updated {ago(age)}</span>

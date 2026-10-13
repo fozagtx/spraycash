@@ -22,6 +22,14 @@ import { usePasskeyAccount } from "@/lib/useAccount";
 import { SignInCard } from "@/components/SignInCard";
 import { Avatar, CurrencyChip, LiveDot, NotConfigured, Spinner, useNow } from "@/components/ui";
 import { ConfirmButton, CopyButton, Odometer, Skeleton, useToast } from "@/components/Motion";
+import { Tour, type TourStep } from "@/components/Tour";
+
+const PAYROLL_TOUR: TourStep[] = [
+  { target: "balance", title: "Your payroll balance", body: "Add funds here first. Every payslip is paid from this balance." },
+  { target: "pay", title: "Pay a freelancer", body: "Pick who, where they live and how much. It takes a minute." },
+  { target: "paying", title: "Paying out now", body: "How much your team earns per day, live." },
+  { target: "list", title: "Everyone you pay", body: "Copy a pay link, or stop pay any time. Unearned pay comes back to you." },
+];
 
 const EMPLOYER = { kind: "employer" } as const;
 
@@ -146,6 +154,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
 
   return (
     <div className="container page stack-lg reveal">
+      <Tour id="payroll" steps={PAYROLL_TOUR} />
       <div className="page-head">
         <div className="stack" style={{ gap: 4 }}>
           <div className="eyebrow">{business || "Your business"}</div>
@@ -153,13 +162,13 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
             Payroll
           </h1>
         </div>
-        <Link href="/employer/new" className="btn btn-accent">
+        <Link href="/employer/new" className="btn btn-accent" data-tour="pay">
           Pay a freelancer
         </Link>
       </div>
 
       <div className="stats">
-        <div className="card">
+        <div className="card" data-tour="balance">
           <span className="small muted">Payroll balance · AUSD by Agora</span>
           <span className="money stat-value">
             {balance === undefined ? <Skeleton w={180} h={40} /> : <Odometer text={formatUsd(usdToNumber(balance))} />}
@@ -170,7 +179,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
             </button>
           )}
         </div>
-        <div className="card">
+        <div className="card" data-tour="paying">
           <span className="small muted">Paying out now</span>
           <span className="money stat-value">
             <Odometer text={formatUsd(perDay)} />
@@ -183,7 +192,7 @@ function Dashboard({ business, acct }: { business: string; acct: ReturnType<type
         </div>
       </div>
 
-      <div className="card" style={{ padding: 0 }}>
+      <div className="card" style={{ padding: 0 }} data-tour="list">
         {!payslips ? (
           <div style={{ padding: 24, display: "grid", gap: 18 }} aria-label="Loading payslips">
             {[0, 1, 2].map((i) => (

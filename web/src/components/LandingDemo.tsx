@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { formatLocal, formatUsd } from "@/lib/format";
 import { HeroAmount } from "./HeroAmount";
-import { Flag, LiveDot, useFrameNow } from "./ui";
+import { ChainlinkLogo, Flag, LiveDot, useFrameNow } from "./ui";
 
 // Illustrative payslip on the landing page (₹1,25,000/month at 83.42). Not live data.
 const MONTHLY_INR = 125000;
@@ -46,7 +46,9 @@ export function LandingDemo() {
       </div>
     </div>
       <div className="float-quote" aria-hidden>
-        <span className="chip chip-verified" style={{ justifySelf: "start" }}>✓ Verified by Chainlink</span>
+        <span className="chip chip-verified" style={{ justifySelf: "start" }}>
+          ✓ Verified by <ChainlinkLogo />
+        </span>
         <span>
           <strong>1 USD = {RATE} INR</strong> <span className="muted">· locked</span>
         </span>

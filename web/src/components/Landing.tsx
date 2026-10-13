@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Morph } from "./Motion";
-import { useFrameNow } from "./ui";
+import { ChainlinkLogo, useFrameNow } from "./ui";
 import { sfx } from "@/lib/sound";
 
 function useInView<T extends Element>(threshold = 0.3) {
@@ -185,7 +185,9 @@ function LockMini() {
       </span>
       <span>
         <strong>1 USD = 83.42 INR</strong>
-        <span className="small muted">Checked by Chainlink · 12s old</span>
+        <span className="small muted chainlink-line">
+          Checked by <ChainlinkLogo /> · 12s old
+        </span>
       </span>
     </div>
   );

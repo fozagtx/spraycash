@@ -675,3 +675,26 @@ body { color: var(--text-primary); }
   .hero-sky .f-ngn { left: 38%; top: 262px; width: 42px !important; }
   .hero-sky .f-inr { right: 12px; top: 228px; width: 52px !important; }
 }
+
+/* guided tour */
+.tour-help { position: fixed; right: 20px; bottom: 20px; z-index: 30; display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px 0 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text-secondary); font: 500 13px var(--font-ui); cursor: pointer; box-shadow: 0 10px 30px -14px rgba(22, 19, 15, 0.35); transition: color var(--duration-hover) linear, transform var(--duration-quick) var(--ease-smooth-out); }
+.tour-help:hover { color: var(--ink); }
+.tour-help:active { transform: scale(0.96); }
+.tour-help:focus-visible { outline: none; box-shadow: var(--ring); }
+.tour-layer { position: fixed; inset: 0; z-index: 60; }
+.tour-backdrop { position: absolute; inset: 0; }
+.tour-spot { position: fixed; border-radius: 18px; box-shadow: 0 0 0 9999px rgba(16, 20, 18, 0.5), 0 0 0 2px var(--accent); pointer-events: none; }
+.tour-pop { position: fixed; display: grid; gap: 6px; padding: 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 24px 48px -16px rgba(16, 20, 18, 0.4); animation: tour-in 220ms var(--ease-smooth-out); }
+@keyframes tour-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } }
+.tour-count { font-size: 12px; color: var(--text-tertiary); font-weight: 500; }
+.tour-title { font-size: 16px; color: var(--text-primary); }
+.tour-body { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
+.tour-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.tour-skip { border: 0; background: none; padding: 6px 2px; color: var(--text-tertiary); font: 500 13px var(--font-ui); cursor: pointer; }
+.tour-skip:hover { color: var(--ink); }
+@media (max-width: 720px) {
+  .tour-help { right: 14px; bottom: 14px; height: 40px; width: 40px; padding: 0; justify-content: center; }
+  .tour-help span { display: none; }
+}
+.chip-verified, .chainlink-line { display: inline-flex; align-items: center; gap: 4px; }
+.chainlink-logo { flex: none; display: inline-block; vertical-align: -2px; }

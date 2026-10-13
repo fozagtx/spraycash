@@ -19,6 +19,13 @@ import { Flag, LiveDot, NotConfigured, Spinner, useFrameNow } from "@/components
 import { sfx } from "@/lib/sound";
 import { Floater } from "@/components/Landing";
 import { Morph } from "@/components/Motion";
+import { Tour, type TourStep } from "@/components/Tour";
+
+const PAYSLIP_TOUR: TourStep[] = [
+  { target: "earned", title: "Your pay so far", body: "It grows every second, shown in your currency." },
+  { target: "withdraw", title: "Withdraw any time", body: "Take out what you've earned whenever you like. It's free." },
+  { target: "details", title: "Your payslip", body: "What you've earned, withdrawn, and how long pay is funded for." },
+];
 
 export default function PayslipPage() {
   const { id: idParam } = useParams<{ id: string }>();
@@ -120,6 +127,7 @@ export default function PayslipPage() {
 
   return (
     <div className="narrow page stack-lg reveal">
+      <Tour id="payslip" steps={PAYSLIP_TOUR} />
       <div className="paper-slip">
       <Floater src="/landing/clip.webp" width={96} depth={4} className="f-slip-clip" />
       <div className="card card-hero stack-lg">
@@ -138,7 +146,7 @@ export default function PayslipPage() {
           )}
         </div>
 
-        <div className="stack" style={{ gap: 10 }}>
+        <div className="stack" style={{ gap: 10 }} data-tour="earned">
           <span className="small muted">Ready to withdraw</span>
           <HeroAmount amount={availableUsd * rate} code={currency.code} />
           <span className="small muted">
@@ -153,7 +161,7 @@ export default function PayslipPage() {
         )}
         {error && <div className="notice notice-danger">{error}</div>}
 
-        <button className="btn btn-accent btn-block" onClick={withdraw} disabled={busy || availableUsd <= 0 || unclaimed}>
+        <button className="btn btn-accent btn-block" onClick={withdraw} disabled={busy || availableUsd <= 0 || unclaimed} data-tour="withdraw">
           {busy ? <Spinner /> : null}
           <Morph>{busy ? "Withdrawing…" : "Withdraw"}</Morph>
           {busy ? null : <span className="money-inline">{formatLocal(availableUsd * rate, currency.code)}</span>}
@@ -171,7 +179,7 @@ export default function PayslipPage() {
       </div>
       </div>
 
-      <div className="card stack" style={{ gap: 0 }}>
+      <div className="card stack" style={{ gap: 0 }} data-tour="details">
         <div className="kv">
           <span>Earned so far</span>
           <span>{formatLocal(earnedUsd * rate, currency.code)}</span>

@@ -17,6 +17,12 @@ import { usePasskeyAccount } from "@/lib/useAccount";
 import { Flag, LiveDot, NotConfigured, Spinner } from "@/components/ui";
 import { Morph } from "@/components/Motion";
 import { sfx } from "@/lib/sound";
+import { Tour, type TourStep } from "@/components/Tour";
+
+const CLAIM_TOUR: TourStep[] = [
+  { target: "offer", title: "Your pay", body: "Who is paying you, how much, and the rate locked for you." },
+  { target: "passkey", title: "Continue with your passkey", body: "Use Face ID or your fingerprint. There's nothing to install." },
+];
 
 type LinkParams = { key?: Hex; from: string; to: string; monthly: number };
 
@@ -148,7 +154,8 @@ export default function ClaimPage() {
 
   return (
     <div className="narrow page stack-lg reveal">
-      <div className="card card-hero stack-lg">
+      <Tour id="claim" steps={CLAIM_TOUR} />
+      <div className="card card-hero stack-lg" data-tour="offer">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span className="person">
             <Flag code={currency.code} large />
@@ -176,7 +183,7 @@ export default function ClaimPage() {
             <span>{Number(p.start) <= now + 120 ? "Now, every second" : formatDate(Number(p.start))}</span>
           </div>
         </div>
-        <button className="btn btn-accent btn-block" onClick={claim} disabled={!!step || acct.busy}>
+        <button className="btn btn-accent btn-block" onClick={claim} disabled={!!step || acct.busy} data-tour="passkey">
           {step ? <Spinner /> : null}
           <Morph>{step ?? "Continue with passkey"}</Morph>
         </button>

@@ -17,6 +17,15 @@ import { QuoteCard, type LockedQuote } from "@/components/QuoteCard";
 import { Flag, NotConfigured, Spinner } from "@/components/ui";
 import { CopyButton, Morph, SegmentedControl, Skeleton, SuccessCheck } from "@/components/Motion";
 import { sfx } from "@/lib/sound";
+import { Tour, type TourStep } from "@/components/Tour";
+
+const NEW_TOUR: TourStep[] = [
+  { target: "who", title: "Who you're paying", body: "Their name shows on the pay link you send them." },
+  { target: "where", title: "Where they live", body: "They see their pay in this currency." },
+  { target: "amount", title: "Monthly pay", body: "Type it in their currency or in dollars. We convert it for you." },
+  { target: "when", title: "When it runs", body: "Pick how long to fund and the day pay starts." },
+  { target: "fund", title: "Lock the rate and pay", body: "Lock today's rate, then confirm. You get a pay link to send." },
+];
 
 const EMPLOYER = { kind: "employer" } as const;
 const DAY = 86400;
@@ -180,6 +189,7 @@ export default function NewPayslipPage() {
 
   return (
     <div className="narrow page stack-lg reveal">
+      <Tour id="new-payslip" steps={NEW_TOUR} />
       <div className="stack" style={{ gap: 4 }}>
         <Link href="/employer" className="small muted back">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -196,12 +206,12 @@ export default function NewPayslipPage() {
         <div className="form-step">
           <span className="form-step-num">1</span>Who you&apos;re paying
         </div>
-        <div className="field">
+        <div className="field" data-tour="who">
           <label htmlFor="name">Name</label>
           <input id="name" className="input" placeholder="Priya Raman" value={name} onChange={(e) => setName(e.target.value)} />
         </div>
 
-        <div className="field">
+        <div className="field" data-tour="where">
           <label>Where they live</label>
           <div className="tiles">
             {CURRENCY_LIST.map((cur) => (
@@ -226,7 +236,7 @@ export default function NewPayslipPage() {
         <div className="form-step">
           <span className="form-step-num">2</span>What you pay
         </div>
-        <div className="field">
+        <div className="field" data-tour="amount">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <label htmlFor="amount">Monthly pay</label>
             <SegmentedControl
@@ -260,7 +270,7 @@ export default function NewPayslipPage() {
         <div className="form-step">
           <span className="form-step-num">3</span>When it runs
         </div>
-        <div className="row">
+        <div className="row" data-tour="when">
           <div className="field">
             <label htmlFor="period">Fund for</label>
             <select id="period" className="select" value={period} onChange={(e) => setPeriod(Number(e.target.value))}>
@@ -305,7 +315,7 @@ export default function NewPayslipPage() {
         }}
       />
 
-      <div className="card stack">
+      <div className="card stack" data-tour="fund">
         <div className="total-row">
           <span>You fund now</span>
           <span className="money total-value">{formatUsd(Math.max(0, fundUsd))}</span>
