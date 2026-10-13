@@ -85,7 +85,7 @@ The product never says blockchain, wallet, crypto, token or gas. It says *accoun
 | **Mera**: best UX | Passkey sign-in for both sides; no seed phrase, no extension | `web/src/lib/passkey.ts` |
 | **Mera**: one passkey, many keys | HKDF-derived account per client from one PRF secret; "My pay" shows each account | `web/src/lib/passkey.ts`, `web/src/app/me` |
 | **Envio** | HyperIndex indexer for payslips, withdrawals, refunds and rate updates | `indexer/` |
-| Alchemy | Monad RPC (set `RELAYER_RPC_URL` / `NEXT_PUBLIC_RPC_URL`) | |
+| Alchemy | Monad RPC (URL in `web/src/lib/config.ts`) | |
 
 ## Repo layout
 

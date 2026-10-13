@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const { address } = (await req.json().catch(() => ({}))) as { address?: string };
   if (!address || !isAddress(address)) return NextResponse.json({ error: "Malformed request." }, { status: 400 });
 
-  const transport = http(process.env.RELAYER_RPC_URL || chain.rpcUrls.default.http[0]);
+  const transport = http(chain.rpcUrls.default.http[0]);
   const account = privateKeyToAccount(key);
   const publicClient = createPublicClient({ chain, transport });
   const walletClient = createWalletClient({ chain, transport, account });

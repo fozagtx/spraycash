@@ -63,7 +63,7 @@ let cachedRelayer: ReturnType<typeof makeRelayer> | null = null;
 function makeRelayer() {
   const key = process.env.RELAYER_PRIVATE_KEY as Hex | undefined;
   if (!key) return null;
-  const transport = http(process.env.RELAYER_RPC_URL || chain.rpcUrls.default.http[0]);
+  const transport = http(chain.rpcUrls.default.http[0]);
   const account = privateKeyToAccount(key);
   return {
     account,
