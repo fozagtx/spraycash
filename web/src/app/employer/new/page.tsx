@@ -75,7 +75,7 @@ export default function NewPayslipPage() {
   }, [startDate]);
 
   async function confirm() {
-    if (!lock) return;
+    if (!lock || lock.currency !== currency) return;
     const locked = lock;
     setError(undefined);
     try {

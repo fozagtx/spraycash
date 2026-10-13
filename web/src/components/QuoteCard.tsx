@@ -39,10 +39,13 @@ export function QuoteCard({
   onLockRef.current = onLock;
   const onQuoteRef = useRef(onQuote);
   onQuoteRef.current = onQuote;
+  const currencyRef = useRef(currency);
+  currencyRef.current = currency;
 
   const refresh = useCallback(async () => {
     try {
       const q = await readQuote(currency);
+      if (q.currency !== currencyRef.current) return null;
       setQuote(q);
       setError(false);
       return q;
@@ -66,10 +69,11 @@ export function QuoteCard({
     findRateTx(currency, quote.updatedBlock).then(setRateTx).catch(() => setRateTx(undefined));
   }, [currency, quote?.updatedBlock]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const unsupported = quote !== null && quote.rate === 0n;
-  const age = quote ? now - Number(quote.updatedAt) : 0;
-  const stale = quote !== null && !unsupported && age > maxAge;
-  const usable = quote !== null && !unsupported && !stale;
+  const current = quote?.currency === currency ? quote : null;
+  const unsupported = current !== null && current.rate === 0n;
+  const age = current ? now - Number(current.updatedAt) : 0;
+  const stale = current !== null && !unsupported && age > maxAge;
+  const usable = current !== null && !unsupported && !stale;
 
   useEffect(() => {
     onQuoteRef.current?.(usable || stale ? quote : null, stale);
