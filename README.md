@@ -27,7 +27,7 @@ Built for the people cross-border pay leaves waiting:
 |---|---|---|
 | 1 | [Why Spraycash](#why-spraycash) | What it does differently |
 | 2 | [Pay your first freelancer](#pay-your-first-freelancer) | The live app in four steps |
-| 3 | [Screenshots](#screenshots) | Employer on a laptop, freelancer on a phone |
+| 3 | [Sponsor tools, live on testnet](#sponsor-tools-live-on-testnet) | Rate reports, AUSD transfers and the payslip on monadscan |
 | 4 | [Built with](#built-with) | Monad, Agora, Chainlink, Mera, Envio, Kimi |
 | 5 | [Sponsor tech in detail](#sponsor-tech-in-detail) | How each one is used, its status and its code |
 | 6 | [Proof on Monad testnet](#proof-on-monad-testnet) | Contract addresses and a real payslip's transactions |
@@ -54,31 +54,19 @@ Built for the people cross-border pay leaves waiting:
 
 Press **Show me how** on the payroll, new payslip, payslip or claim page for a guided tour.
 
-## Screenshots
-
-**Employer, on a laptop**
+## Sponsor tools, live on testnet
 
 <p>
-<img src="docs/screens/01-hero.png" width="49%" alt="Landing page" />
-<img src="docs/screens/02-map.png" width="49%" alt="Pay routes map on the landing page" />
-</p>
-<p>
-<img src="docs/screens/04-new-payslip.png" width="49%" alt="New payslip with the locked Chainlink rate" />
-<img src="docs/screens/07-payslip-live.png" width="49%" alt="Live payslip on the employer side" />
-</p>
-<p>
-<img src="docs/screens/06-tour.png" width="49%" alt="Show me how tour" />
-<img src="docs/screens/12-explorer.png" width="49%" alt="The withdrawal on the Monad testnet explorer" />
+<img src="docs/screens/13-rate-reports.png" width="49%" alt="FxRateReceiver on monadscan: an onReport rate update every 4 to 5 minutes" />
+<img src="docs/screens/14-ausd-payroll.png" width="49%" alt="AUSD token transfers in and out of the payroll contract on monadscan" />
 </p>
 
-**Freelancer, on a phone**
-
-<p>
-<img src="docs/screens/08-mobile-hero.png" width="24%" alt="Landing page on a phone" />
-<img src="docs/screens/09-claim.png" width="24%" alt="Claiming pay with a passkey" />
-<img src="docs/screens/10-streaming.png" width="24%" alt="Pay going up every second" />
-<img src="docs/screens/11-receipt.png" width="24%" alt="Withdrawal receipt" />
-</p>
+| Sponsor | What's live | Check it |
+|---|---|---|
+| Chainlink CRE | `FxRateReceiver.onReport` gets a fresh USD/INR, NGN, MXN, PHP report every 4 to 5 minutes. For now the deployer key sends it in the CRE report format; the CRE workflow itself hasn't run through the CRE CLI yet. | [Rate reports](https://testnet.monadscan.com/address/0x1331ded23217632b318b828040318ec510857a93), [latest report](https://testnet.monadscan.com/tx/0x90a2a41d7abee108361ee3e0dd45cfcbc1529939f9b9f7bd88ed2332a9bc53e7#eventlog) |
+| Agora AUSD | Every payslip is funded in AUSD into the payroll contract and paid out in AUSD. | [AUSD in and out of payroll](https://testnet.monadscan.com/address/0x60a281101208e007dbdb0b90dae3f90ef214b962#tokentxns) |
+| Monad | Payslip #15 created, claimed, withdrawn and stopped, all sent by the relayer so users pay no fees. | [Create](https://testnet.monadscan.com/tx/0xdc76d9590b84108332e0d3eee171ac6fd966381e5cd63f3041a34ead7f7ef88e), [claim](https://testnet.monadscan.com/tx/0x0fcce87e6dd5cbd669568d0a7347f0af7e4738e3d4134df6b52f7fd250495c6b), [withdraw](https://testnet.monadscan.com/tx/0x38501ad28bb454db2721f8676f38a0a61f4de996625c4c732597b80b445c8f02), [stop](https://testnet.monadscan.com/tx/0xcd73842d6fa7fa0d228db69a119e256e8bf74612f63897d1b0749f94c6d35bb2) |
+| Mera passkeys | The passkey signs the claim and withdrawal above; the freelancer's per-client account is the `to` of the AUSD payout. | [Withdrawal](https://testnet.monadscan.com/tx/0x38501ad28bb454db2721f8676f38a0a61f4de996625c4c732597b80b445c8f02) |
 
 ## Built with
 
