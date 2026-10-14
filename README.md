@@ -27,7 +27,7 @@ Built for the people cross-border pay leaves waiting:
 |---|---|---|
 | 1 | [Why Spraycash](#why-spraycash) | What it does differently |
 | 2 | [Pay your first freelancer](#pay-your-first-freelancer) | The live app in four steps |
-| 3 | [Sponsor tools, live on testnet](#sponsor-tools-live-on-testnet) | Rate reports, AUSD transfers and the payslip on monadscan |
+| 3 | [Sponsor tools, live on testnet](#sponsor-tools-live-on-testnet) | Rate reports, AUSD transfers and Envio's index of Monad testnet |
 | 4 | [Built with](#built-with) | Monad, Agora, Chainlink, Mera, Envio, Kimi |
 | 5 | [Sponsor tech in detail](#sponsor-tech-in-detail) | How each one is used, its status and its code |
 | 6 | [Proof on Monad testnet](#proof-on-monad-testnet) | Contract addresses and a real payslip's transactions |
@@ -60,6 +60,10 @@ Press **Show me how** on the payroll, new payslip, payslip or claim page for a g
 <img src="docs/screens/13-rate-reports.png" width="49%" alt="FxRateReceiver on monadscan: an onReport rate update every 4 to 5 minutes" />
 <img src="docs/screens/14-ausd-payroll.png" width="49%" alt="AUSD token transfers in and out of the payroll contract on monadscan" />
 </p>
+<p>
+<img src="docs/screens/15-rate-report-tx.png" width="49%" alt="The latest onReport rate transaction on monadscan, status Success" />
+<img src="docs/screens/16-envio-graphql.png" width="49%" alt="Envio's GraphQL returning payslips 15, 17 and 18 indexed from Monad testnet" />
+</p>
 
 | Sponsor | What's live | Check it |
 |---|---|---|
@@ -67,6 +71,7 @@ Press **Show me how** on the payroll, new payslip, payslip or claim page for a g
 | Agora AUSD | Every payslip is funded in AUSD into the payroll contract and paid out in AUSD. | [AUSD in and out of payroll](https://testnet.monadscan.com/address/0x60a281101208e007dbdb0b90dae3f90ef214b962#tokentxns) |
 | Monad | Payslip #15 created, claimed, withdrawn and stopped, all sent by the relayer so users pay no fees. | [Create](https://testnet.monadscan.com/tx/0xdc76d9590b84108332e0d3eee171ac6fd966381e5cd63f3041a34ead7f7ef88e), [claim](https://testnet.monadscan.com/tx/0x0fcce87e6dd5cbd669568d0a7347f0af7e4738e3d4134df6b52f7fd250495c6b), [withdraw](https://testnet.monadscan.com/tx/0x38501ad28bb454db2721f8676f38a0a61f4de996625c4c732597b80b445c8f02), [stop](https://testnet.monadscan.com/tx/0xcd73842d6fa7fa0d228db69a119e256e8bf74612f63897d1b0749f94c6d35bb2) |
 | Mera passkeys | The passkey signs the claim and withdrawal above; the freelancer's per-client account is the `to` of the AUSD payout. | [Withdrawal](https://testnet.monadscan.com/tx/0x38501ad28bb454db2721f8676f38a0a61f4de996625c4c732597b80b445c8f02) |
+| Envio HyperIndex | The indexer syncs Monad testnet and returns every payslip, withdrawal and rate update through GraphQL (payslips #15, #17 and #18 in the shot). It runs on our machine against testnet; it isn't hosted yet, so the live site reads history from the contracts. | `indexer/`, `web/src/app/api/history` |
 
 ## Built with
 
