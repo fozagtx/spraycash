@@ -1,21 +1,58 @@
-<img src="docs/logo.svg" width="48" alt="Spraycash logo" />
+<p align="center">
+  <img src="docs/screens/01-hero.png" alt="The Spraycash landing page: Payroll for the rest of us all" />
+</p>
 
-# Spraycash
+<p align="center">
+  <a href="https://spraycash.onrender.com"><img src="https://img.shields.io/badge/live%20app-spraycash.onrender.com-0f6b4f" alt="Live app" /></a>
+  <a href="https://testnet.monadscan.com/address/0x60a281101208e007dbdb0b90dae3f90ef214b962"><img src="https://img.shields.io/badge/Monad-testnet%2010143-836EF9" alt="Monad testnet" /></a>
+  <img src="https://img.shields.io/badge/paid%20in-AUSD-16130f" alt="Paid in AUSD" />
+  <img src="https://img.shields.io/badge/Monad%20Metropolis-Consumer%20Products%20%26%20Payments-6b655c" alt="Monad Metropolis, Consumer Products & Payments" />
+</p>
 
-**Payroll for the rest of us all.** An employer anywhere pays a freelancer in Lagos, Bengaluru, Mexico City or Manila in AUSD, Agora's digital dollar. The freelancer watches the pay go up every second in their own currency, at an exchange rate locked the moment the employer pressed pay, and withdraws whenever they want for free.
+# <img src="docs/logo.svg" alt="" width="36" align="top" /> Spraycash
 
-Built for Monad Metropolis, Consumer Products & Payments track.
+Spraycash is payroll for the rest of us all. An employer anywhere pays a freelancer in Lagos, Bengaluru, Mexico City or Manila in AUSD, Agora's digital dollar. The freelancer signs in with a passkey, watches the pay go up every second in their own currency at an exchange rate locked the moment the employer pressed pay, and withdraws whenever they want for free.
 
-**Live app:** https://spraycash.onrender.com (Monad testnet; a new account starts with $10,000 test AUSD)
+Built for the people cross-border pay leaves waiting:
 
-## Contents
+- **Freelancers** paid from another country, who wait days for an invoice to clear and lose a cut to the bank in the middle.
+- **Small studios and startups** with a few people abroad, who want to pay them without a payroll provider.
+- **Anyone paid by the hour or the day**, who would rather see what they've earned so far than wait for the end of the month.
 
-1. [Screenshots](#screenshots)
-2. [How it works](#how-it-works)
-3. [Proof on Monad testnet](#proof-on-monad-testnet)
-4. [Sponsor tech and where it lives in the code](#sponsor-tech-and-where-it-lives-in-the-code)
-5. [Run it yourself](#setup)
-6. [Limitations](#limitations)
+**Try it:** https://spraycash.onrender.com (Monad testnet; a new account starts with $10,000 test AUSD)
+
+## Table of contents
+
+| | Section | What's in it |
+|---|---|---|
+| 1 | [Why Spraycash](#why-spraycash) | What it does differently |
+| 2 | [Pay your first freelancer](#pay-your-first-freelancer) | The live app in four steps |
+| 3 | [Screenshots](#screenshots) | Employer on a laptop, freelancer on a phone |
+| 4 | [Built with](#built-with) | Monad, Agora, Chainlink, Mera, Envio, Kimi |
+| 5 | [Sponsor tech in detail](#sponsor-tech-in-detail) | How each one is used, its status and its code |
+| 6 | [Proof on Monad testnet](#proof-on-monad-testnet) | Contract addresses and a real payslip's transactions |
+| 7 | [Everything Spraycash does](#everything-spraycash-does) | Every feature, in one table |
+| 8 | [Run from source](#run-from-source) | Contracts, CRE workflow, web app, indexer, tests |
+| 9 | [How it works (for developers)](#how-it-works-for-developers) | Contracts, relayer, rates, passkeys, failure cases |
+| 10 | [Limitations](#limitations) | What isn't done yet |
+
+## Why Spraycash
+
+- **Paid every second.** Pay streams every second from the start date, so a day's work is in their balance that day.
+- **A rate that can't move.** The employer sees the pay in naira, rupees, pesos or Philippine pesos at a verified rate, and that rate is locked into the payslip when they press pay.
+- **Free to withdraw.** The relayer pays every network fee, so the freelancer gets everything they earned.
+- **A passkey and nothing else.** Fingerprint, face or screen lock. There's no seed phrase, wallet app or extension, and one passkey keeps each client's pay in its own account.
+- **Stop pay any time.** What the freelancer earned stays theirs, and the rest goes back to the employer in the same transaction.
+- **Ready in a minute.** A new employer account gets $10,000 test AUSD on sign-in, so they can pay someone straight away.
+
+## Pay your first freelancer
+
+1. **Sign in** at https://spraycash.onrender.com with a passkey. Your account is funded with $10,000 test AUSD.
+2. **Add a freelancer:** name, country, monthly pay and how long to fund it. The rate card shows their pay in their currency, then press **Pay**.
+3. **Send the pay link.** The freelancer opens it, signs in with their own passkey and watches the pay go up every second.
+4. **Withdraw or stop.** The freelancer withdraws for free and gets a receipt. You can stop pay at any time.
+
+Press **Show me how** on the payroll, new payslip, payslip or claim page for a guided tour.
 
 ## Screenshots
 
@@ -43,26 +80,38 @@ Built for Monad Metropolis, Consumer Products & Payments track.
 <img src="docs/screens/11-receipt.png" width="24%" alt="Withdrawal receipt" />
 </p>
 
-## How it works
+## Built with
 
-1. **The employer signs in with a passkey.** A new account gets $10,000 test AUSD straight away, so they can pay someone in the first minute.
-2. **They add a freelancer:** name, country (India, Mexico, Philippines or Nigeria), monthly pay and how long to fund it. The rate card shows the pay in the freelancer's currency at the latest Chainlink-verified rate, and holds that quote for 5 seconds.
-3. **They press pay.** The AUSD is escrowed in the payroll contract with one signature (an EIP-2612 permit), and the rate is locked into the payslip. If a newer rate lands during confirmation, the contract rejects the payment so the employer can review it. If the rate is older than 10 minutes, paying is blocked.
-4. **The freelancer opens the pay link** and signs in with their own passkey. The link carries a one-time key in the URL fragment, which never reaches a server, so nobody who sees the link's transaction can redirect the pay.
-5. **The pay streams every second** from the start date, shown in the freelancer's currency with the dollar amount beside it.
-6. **The freelancer withdraws** what they've earned at any time. It's free, because the relayer pays the network fee. The receipt links to the withdrawal, the funding transaction and the locked rate report.
-7. **The employer can stop pay** at any time. What the freelancer earned stays theirs, and the rest goes back to the employer in the same transaction.
+<table align="center">
+  <tbody>
+    <tr>
+      <td colspan="6" width="850" align="center"><a href="https://www.monad.xyz/"><img src="docs/logos/monad.png" alt="" height="44" align="middle" /> <b>Monad</b></a><br /><sub>Payroll, rates and the gasless forwarder, on testnet</sub></td>
+    </tr>
+    <tr>
+      <td colspan="2" width="283" align="center"><a href="https://www.agora.finance/"><img src="docs/logos/agora.png" alt="" height="36" align="middle" /> <b>Agora AUSD</b></a><br /><sub>The dollar every payslip is paid in</sub></td>
+      <td colspan="2" width="283" align="center"><a href="https://chain.link/chainlink-runtime-environment"><img src="docs/logos/chainlink.svg" alt="" height="36" align="middle" /> <b>Chainlink CRE</b></a><br /><sub>The FX rate workflow</sub></td>
+      <td colspan="2" width="283" align="center"><b>Mera passkeys</b><br /><sub>One passkey, a key per client</sub></td>
+    </tr>
+    <tr>
+      <td colspan="3" width="425" align="center"><a href="https://envio.dev/"><img src="docs/logos/envio.png" alt="" height="30" align="middle" /> <b>Envio HyperIndex</b></a><br /><sub>Payslip and withdrawal history</sub></td>
+      <td colspan="3" width="425" align="center"><a href="https://www.kimi.com/"><img src="docs/logos/kimi.png" alt="" height="30" align="middle" /> <b>Kimi K3 via Devin</b></a><br /><sub>Designed and built the whole UI</sub></td>
+    </tr>
+  </tbody>
+</table>
 
-What happens when something goes wrong:
+## Sponsor tech in detail
 
-| Case | What the user sees |
-|---|---|
-| Rate older than 10 minutes | Pay is disabled with "Rate refreshing"; the contract reverts `StaleRate` |
-| Rate changed during confirmation | The contract reverts `QuoteChanged`; the app asks the employer to review the new rate |
-| Not enough balance | Pay is disabled; the contract reverts `InsufficientBalance` |
-| Bad link or wrong key | "This pay link doesn't work" |
-| Link already used | "This pay link has already been used" |
-| Link expired | The freelancer is told; the employer gets a Refund button |
+**Agora AUSD.** AUSD is the only money in the app. Employers fund payroll with one gasless permit signature (`createPayslipWithPermit`), the contract escrows and streams it, and freelancers withdraw AUSD. New accounts are funded from a relayer pool that refills from Agora's testnet faucet. Code: `contracts/contracts/SpraycashPayroll.sol`, `web/src/lib/permit.ts`, `web/src/lib/test-funds.ts`, `web/src/app/api/faucet`.
+
+**Chainlink CRE.** The `cre/spraycash-fx` workflow runs every 60 seconds. It fetches USD rates from Frankfurter (ECB) and open.er-api, takes the median, rejects a pair whose sources differ by more than 1%, and writes a signed report to `FxRateReceiver.onReport`, which only accepts the forwarder and rejects replays. Status: the workflow is unit-tested and compiles to WASM but hasn't been run with the CRE CLI yet, so on testnet the same rates are written by the deployer key for now. Code: `cre/spraycash-fx/`, `contracts/contracts/FxRateReceiver.sol`.
+
+**Mera passkeys: one passkey, many keys.** One passkey gives one WebAuthn PRF secret. HKDF derives a separate account from it for the employer side and for each client a freelancer works for (`client:<employer address>`), so each client's pay stays separate behind one Face ID. The "My pay" page lists them. Code: `web/src/lib/passkey.ts`, `web/src/lib/useAccount.ts`, `web/src/app/me`.
+
+**Envio HyperIndex.** An indexer for payslips, withdrawals, refunds and rate updates feeds the Withdrawals card on each payslip through `/api/history`. Status: it runs locally and isn't hosted yet, so the live site reads history from the contracts instead. Code: `indexer/`, `web/src/app/api/history`.
+
+**Monad.** The payroll, rate receiver and gasless forwarder contracts are on Monad testnet. Fast blocks let the rate be locked and settled before the next report, and let the balance move every block. Code: `contracts/`.
+
+**Kimi K3 via Devin.** The whole UI was designed and built with Kimi K3 via Devin. Code: `web/`.
 
 ## Proof on Monad testnet
 
@@ -86,21 +135,32 @@ Payslip #15, recorded end to end on https://spraycash.onrender.com:
 
 Every transaction is sent from the relayer wallet `0xad42...4aC26`, which is how users pay no fees.
 
-## Sponsor tech and where it lives in the code
+## Everything Spraycash does
 
-**Agora AUSD.** AUSD is the only money in the app. Employers fund payroll with one gasless permit signature (`createPayslipWithPermit`), the contract escrows and streams it, and freelancers withdraw AUSD. New accounts are funded from a relayer pool that refills from Agora's testnet faucet. Code: `contracts/contracts/SpraycashPayroll.sol`, `web/src/lib/permit.ts`, `web/src/lib/test-funds.ts`, `web/src/app/api/faucet`.
+<details>
+<summary>Every feature, in one table</summary>
 
-**Chainlink CRE.** The `cre/spraycash-fx` workflow runs every 60 seconds. It fetches USD rates from Frankfurter (ECB) and open.er-api, takes the median, rejects a pair whose sources differ by more than 1%, and writes a signed report to `FxRateReceiver.onReport`, which only accepts the forwarder and rejects replays. The workflow is unit-tested and compiles to WASM but hasn't been run with the CRE CLI yet, so on testnet the same rates are written by the deployer key for now. Code: `cre/spraycash-fx/`, `contracts/contracts/FxRateReceiver.sol`.
+| | Feature | What it does |
+|---|---|---|
+| F1 | **Passkey sign-in** | Fingerprint, face or screen lock through WebAuthn PRF. No seed phrase, wallet or extension. |
+| F2 | **Starting balance** | A new employer account gets $10,000 test AUSD from the relayer pool on first sign-in, with Agora's faucet as the fallback. |
+| F3 | **New payslip** | Name, country (India, Mexico, Philippines or Nigeria), monthly pay, start date and how long to fund it. |
+| F4 | **Rate card** | The pay in the freelancer's currency at the latest rate, its sources, its age and a link to the rate's transaction. The quote is held for 5 seconds. |
+| F5 | **Locked rate** | The rate goes into the payslip when the employer presses pay. If a newer rate lands first, the contract rejects it so the employer can review. |
+| F6 | **One-signature funding** | An EIP-2612 permit approves and escrows the AUSD in one gasless signature. |
+| F7 | **Pay link** | A claim link with a one-time key in the URL fragment, which never reaches a server, so the pay can't be redirected. |
+| F8 | **Streaming pay** | The balance goes up every second from the start date, in the freelancer's currency with the dollar amount beside it. |
+| F9 | **Free withdrawals** | The freelancer withdraws what they've earned at any time; the relayer pays the fee. |
+| F10 | **Receipts** | Each withdrawal gets a receipt linking the withdrawal, the funding transaction and the locked rate. |
+| F11 | **Stop pay** | The employer stops pay at any time; earned pay stays with the freelancer, the rest is refunded in the same transaction. |
+| F12 | **Unclaimed refunds** | If a link expires unclaimed, the employer gets a Refund button. |
+| F13 | **My pay** | One page listing a freelancer's pay from every client, each in its own passkey-derived account. |
+| F14 | **Show me how** | A guided tour on the payroll, new payslip, payslip and claim pages. |
+| F15 | **Landing map** | Animated pay routes from New York and London to Lagos, Bengaluru, Mexico City and Manila. |
 
-**Mera passkeys: one passkey, many keys.** One passkey gives one WebAuthn PRF secret. HKDF derives a separate account from it for the employer side and for each client a freelancer works for (`client:<employer address>`), so each client's pay stays separate behind one Face ID. The "My pay" page lists them. Code: `web/src/lib/passkey.ts`, `web/src/lib/useAccount.ts`, `web/src/app/me`.
+</details>
 
-**Envio.** A HyperIndex indexer for payslips, withdrawals, refunds and rate updates feeds the Withdrawals card on each payslip through `/api/history`. It runs locally and isn't hosted yet, so the live site reads history from the contracts instead. Code: `indexer/`, `web/src/app/api/history`.
-
-**Monad.** The payroll, rate receiver and gasless forwarder contracts are on Monad testnet. Fast blocks let the rate be locked and settled before the next report, and let the balance move every block. Code: `contracts/`.
-
-**Kimi K3 via Devin.** The whole UI was designed and built with Kimi K3 via Devin. Code: `web/`.
-
-## Setup
+## Run from source
 
 Requirements: Node 22, bun ≥ 1.2.21, the [CRE CLI](https://docs.chain.link/cre/getting-started/cli-installation),
 and a funded Monad testnet key.
@@ -159,7 +219,7 @@ Deploy on Render from the Blueprint in `render.yaml`. The only value to set is `
 cd indexer && npm install && npx envio codegen && npx envio dev
 ```
 
-## Testing
+### 5. Tests
 
 | Layer | Command | Status |
 |---|---|---|
@@ -183,6 +243,30 @@ npx hardhat run scripts/push-rate.ts --network localhost # stands in for CRE loc
 cd ../web && npm run dev &
 NODE_PATH=$(npm root -g) node e2e/flow.cjs               # screenshots in web/e2e/screenshots
 ```
+
+<details>
+<summary><b>How it works</b> (for developers)</summary>
+
+## How it works (for developers)
+
+- **Contracts** (`contracts/`): `SpraycashPayroll` escrows AUSD per payslip, streams it per second between `start` and `end`, and handles claim, withdraw, stop and unclaimed refunds. `FxRateReceiver` stores the latest rate per currency from signed reports. `SpraycashForwarder` is the ERC-2771 forwarder for gasless calls.
+- **Relayer** (`web/src/app/api/relay`): forwards a fixed allowlist of calls (`createPayslip`, `createPayslipWithPermit`, `claim`, `withdraw`, `stop`, `refundUnclaimed`), verifies the signed ERC-2771 request, dry-runs it to turn contract errors into plain-language messages, then submits. Relayer writes go through one queue so nonces never collide.
+- **Rates**: the contract rejects a payslip if the rate is older than 10 minutes (`StaleRate`) or changed since the quote (`QuoteChanged`). On Render the server checks the rate every 60 seconds and writes a fresh one when it's 4 minutes old.
+- **Passkeys** (`web/src/lib/passkey.ts`): one PRF secret per passkey, HKDF-derived accounts per role and per client.
+- **History**: `/api/history` reads from the Envio indexer when one is configured, and from contract events otherwise.
+
+What happens when something goes wrong:
+
+| Case | What the user sees |
+|---|---|
+| Rate older than 10 minutes | Pay is disabled with "Rate refreshing"; the contract reverts `StaleRate` |
+| Rate changed during confirmation | The contract reverts `QuoteChanged`; the app asks the employer to review the new rate |
+| Not enough balance | Pay is disabled; the contract reverts `InsufficientBalance` |
+| Bad link or wrong key | "This pay link doesn't work" |
+| Link already used | "This pay link has already been used" |
+| Link expired | The freelancer is told; the employer gets a Refund button |
+
+</details>
 
 ## Limitations
 
